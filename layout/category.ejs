@@ -1,0 +1,32 @@
+<%- partial('partial/head') %>
+<%- partial('partial/header') %>
+
+<main id="main-content">
+  <div class="category-container">
+    <h1 class="page-title kinetic-title"><%= page.category || __('category.title') %></h1>
+
+    <% if (site.categories && site.categories.length) { %>
+      <ul class="category-list">
+        <% site.categories.each(function(cat) { %>
+          <li class="category-list-item">
+            <a href="<%= url_for('/categories/' + cat.name) %>"><%= cat.name %>
+              <span class="category-count"><%= cat.posts.length %></span>
+            </a>
+          </li>
+        <% }) %>
+      </ul>
+
+      <% if (page.posts && page.posts.length) { %>
+        <div class="article-cards">
+          <% page.posts.each(function(post) { %>
+            <%- partial('partial/article-card', { post: post }) %>
+          <% }) %>
+        </div>
+      <% } %>
+    <% } else { %>
+      <p class="search-empty" data-i18n="category.empty"><%= __('category.empty') %></p>
+    <% } %>
+  </div>
+</main>
+
+<%- partial('partial/footer') %>

@@ -1,0 +1,68 @@
+/* ============================================
+   miku-theme — Code Highlight (both themes)
+   ============================================ */
+
+/* Light mode */
+pre, code {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.65;
+}
+
+code {
+  background: var(--primary-muted);
+  color: var(--accent);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+
+pre {
+  background: #1E293B;
+  color: #E2E8F0;
+  padding: 1.25rem 1.5rem;
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  margin: 1.5rem 0;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+pre code {
+  background: none;
+  color: inherit;
+  padding: 0;
+  font-size: inherit;
+  border-radius: 0;
+}
+
+/* Highlight.js theme tokens — One Dark inspired */
+.hljs-keyword    { color: #C678DD; }
+.hljs-string     { color: #98C379; }
+.hljs-number     { color: #D19A66; }
+.hljs-comment    { color: #5C6370; font-style: italic; }
+.hljs-function   { color: #61AFEF; }
+.hljs-title      { color: #61AFEF; }
+.hljs-params     { color: #ABB2BF; }
+.hljs-built_in   { color: #E5C07B; }
+.hljs-type       { color: #E5C07B; }
+.hljs-attr       { color: #D19A66; }
+.hljs-variable   { color: #E06C75; }
+.hljs-literal    { color: #D19A66; }
+.hljs-selector-class { color: #E06C75; }
+.hljs-selector-tag   { color: #E06C75; }
+.hljs-meta       { color: #C678DD; }
+.hljs-tag        { color: #ABB2BF; }
+.hljs-name       { color: #E06C75; }
+.hljs-attribute  { color: #D19A66; }
+.hljs-symbol     { color: #56B6C2; }
+.hljs-regexp     { color: #56B6C2; }
+.hljs-link       { color: #61AFEF; text-decoration: underline; }
+.hljs-deletion   { color: #E06C75; }
+.hljs-addition   { color: #98C379; }
+
+/* Dark mode overrides */
+[data-theme="dark"] pre {
+  background: #0F172A;
+  border-color: var(--border);
+}

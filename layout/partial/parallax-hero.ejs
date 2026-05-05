@@ -1,0 +1,12 @@
+<!-- Parallax Hero Section -->
+<section class="parallax-hero" id="parallaxHero" aria-label="<%= __('a11y.hero_banner') %>">
+  <div class="parallax-layer parallax-layer--bg" id="parallaxBg" aria-hidden="true" style="background-image: url('<%= url_for('/images/hero-bg.webp') %>')"></div>
+  <canvas class="parallax-layer parallax-layer--particles" id="parallaxParticles" aria-hidden="true"></canvas>
+  <div class="parallax-layer parallax-layer--foreground" id="parallaxForeground">
+    <h1 class="hero-title kinetic-title"><%= theme.hero.title %></h1>
+    <p class="hero-subtitle"><%= theme.hero.subtitle %></p>
+  </div>
+  <div class="hero-scroll-hint" aria-hidden="true" data-i18n="hero.scroll_hint">
+    <%= __('hero.scroll_hint') %>
+  </div>
+</section>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="<%= config.language || 'en' %>" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <!-- SEO -->
+  <% if (page.title) { %>
+    <title><%= page.title %> — <%= config.title %></title>
+  <% } else { %>
+    <title><%= config.title %></title>
+  <% } %>
+
+  <meta name="description" content="<%= page.description || page.excerpt || config.description %>">
+  <meta name="keywords" content="<%= page.keywords || config.keywords %>">
+  <meta name="author" content="<%= config.author %>">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="<%= page.layout === 'post' ? 'article' : 'website' %>">
+  <meta property="og:title" content="<%= page.title || config.title %>">
+  <meta property="og:description" content="<%= page.description || page.excerpt || config.description %>">
+  <meta property="og:url" content="<%= config.url %>/<%= page.path %>">
+  <meta property="og:site_name" content="<%= config.title %>">
+  <% if (page.cover || page.thumbnail) { %>
+    <meta property="og:image" content="<%= config.url %>/<%= page.cover || page.thumbnail %>">
+  <% } else { %>
+    <meta property="og:image" content="<%= config.url %>/images/default-og-image.webp">
+  <% } %>
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="<%= page.title || config.title %>">
+  <meta name="twitter:description" content="<%= page.description || page.excerpt || config.description %>">
+  <% if (page.cover || page.thumbnail) { %>
+    <meta name="twitter:image" content="<%= config.url %>/<%= page.cover || page.thumbnail %>">
+  <% } else { %>
+    <meta name="twitter:image" content="<%= config.url %>/images/default-og-image.webp">
+  <% } %>
+
+  <!-- Canonical -->
+  <link rel="canonical" href="<%= config.url %>/<%= page.path %>">
+
+  <!-- RSS -->
+  <link rel="alternate" href="<%= url_for('/atom.xml') %>" type="application/atom+xml" title="<%= config.title %>">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="<%= url_for('/css/variables.css') %>">
+  <link rel="stylesheet" href="<%= url_for('/css/style.css') %>">
+  <link rel="stylesheet" href="<%= url_for('/css/highlight.css') %>">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400..900;1,14..32,400..700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+  <!-- Favicon -->
+  <link rel="icon" href="<%= url_for('/images/favicon.png') %>" type="image/png">
+  <link rel="icon" href="<%= url_for('/images/favicon.png') %>" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="<%= url_for('/images/favicon.png') %>">
+</head>
+<body>
+  <!-- Skip to content for accessibility -->
+  <a href="#main-content" class="sr-only" style="position:absolute;top:0;left:0;z-index:9999;background:var(--primary);color:#fff;padding:0.5rem 1rem;border-radius:0 0 4px 0;"><%= __('a11y.skip_to_content') %></a>

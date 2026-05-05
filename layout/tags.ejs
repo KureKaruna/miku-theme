@@ -1,0 +1,51 @@
+<%- partial('partial/head') %>
+<%- partial('partial/header') %>
+
+<main id="main-content">
+  <div class="tags-container">
+    <h1 class="page-title kinetic-title" data-i18n="tags.title"><%= __('tags.title') %></h1>
+
+    <!-- Tag Cloud -->
+    <% if (site.tags && site.tags.length) { %>
+      <div class="tag-cloud" aria-label="<%= __('a11y.tag_cloud') %>">
+        <% var tagSizes = {}; %>
+        <% var maxCount = 0; var minCount = Infinity; %>
+        <% site.tags.each(function(tag) { %>
+          <% if (tag.posts.length > maxCount) maxCount = tag.posts.length; %>
+          <% if (tag.posts.length < minCount) minCount = tag.posts.length; %>
+        <% }) %>
+
+        <%
+          var sizes = ['xs', 'sm', 'md', 'lg', 'xl'];
+          function getSize(count) {
+            if (maxCount === minCount) return sizes[2];
+            var ratio = (count - minCount) / (maxCount - minCount);
+            return sizes[Math.min(sizes.length - 1, Math.floor(ratio * sizes.length))];
+          }
+        %>
+
+        <% site.tags.each(function(tag) { %>
+          <a href="#tag-<%= tag.name %>" class="tag-cloud-item size-<%= getSize(tag.posts.length) %>">
+            <%= tag.name %>
+          </a>
+        <% }) %>
+      </div>
+
+      <!-- Tag Sections -->
+      <% site.tags.each(function(tag) { %>
+        <section class="tag-section" id="tag-<%= tag.name %>">
+          <h2 class="tag-section-title"># <%= tag.name %></h2>
+          <div class="article-cards">
+            <% tag.posts.each(function(post) { %>
+              <%- partial('partial/article-card', { post: post }) %>
+            <% }) %>
+          </div>
+        </section>
+      <% }) %>
+    <% } else { %>
+      <p class="search-empty" data-i18n="tags.empty"><%= __('tags.empty') %></p>
+    <% } %>
+  </div>
+</main>
+
+<%- partial('partial/footer') %>

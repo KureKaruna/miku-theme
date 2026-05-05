@@ -1,0 +1,64 @@
+nav:
+  home: Home
+  archives: Archives
+  tags: Tags
+  about: About
+  search: Search
+
+a11y:
+  skip_to_content: Skip to main content
+  main_nav: Main navigation
+  toggle_nav: Toggle navigation menu
+  primary_nav: Primary navigation
+  hero_banner: Hero banner
+  search_posts: Search posts
+  search_placeholder: Type to search posts...
+  tag_cloud: Tag cloud
+  recent_posts: Recent posts
+  page_nav: Page navigation
+  archive_pagination: Archive pagination
+  toc: Table of Contents
+  reading_time: Reading time
+  back_to_top: Back to top
+  adjacent_posts: Adjacent posts
+  social_links: Social links
+  avatar: Avatar
+
+hero:
+  scroll_hint: Scroll to explore
+
+post:
+  toc_title: Contents
+  prev: ← Previous
+  next: Next →
+  min_read: min read
+  cover_alt: Cover image for
+
+pagination:
+  prev: ← Prev
+  next: Next →
+
+archive:
+  title: Archives
+
+tags:
+  title: Tags
+  empty: No tags yet. Write some posts!
+
+search:
+  title: Search
+  index_missing: Search index not found. Run <code>hexo generate</code> first.
+  no_results: No posts found for &ldquo;%s&rdquo;.
+  results: '%d results'
+
+category:
+  title: Categories
+  empty: No categories yet.
+
+theme:
+  switch_light: Switch to light mode
+  switch_dark: Switch to dark mode
+
+lang:
+  switch_to: 中文
+  label: Language

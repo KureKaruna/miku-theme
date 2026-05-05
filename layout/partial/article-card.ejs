@@ -1,0 +1,40 @@
+<!-- Article Card (used in index, archive, tag pages) -->
+<article class="article-card" itemscope itemtype="http://schema.org/Article">
+  <% if (post.cover || post.thumbnail) { %>
+    <div class="article-card-cover" aria-hidden="true">
+      <img src="<%= url_for(post.cover || post.thumbnail) %>" alt="<%= __('post.cover_alt') %> <%= post.title %>" loading="lazy" itemprop="image">
+    </div>
+  <% } %>
+
+  <% if (post.tags && post.tags.length) { %>
+    <div class="article-card-tags">
+      <% post.tags.forEach(function(tag) { %>
+        <a href="<%= url_for('/tags/' + tag.name) %>" class="tag-pill"><%= tag.name %></a>
+      <% }) %>
+    </div>
+  <% } %>
+
+  <h2 class="article-card-title">
+    <a href="<%= url_for(post.path) %>" itemprop="url">
+      <span itemprop="headline"><%= post.title %></span>
+    </a>
+  </h2>
+
+  <% if (post.excerpt) { %>
+    <p class="article-card-excerpt" itemprop="description">
+      <%- post.excerpt %>
+    </p>
+  <% } %>
+
+  <div class="article-card-meta">
+    <time datetime="<%= date(post.date, 'YYYY-MM-DD') %>" itemprop="datePublished">
+      <%= date(post.date, theme.post.date_format) %>
+    </time>
+    <% if (theme.post.reading_time && post.content) { %>
+      <span aria-label="<%= __('a11y.reading_time') %>" data-i18n-attrs="aria-label">
+        <% var wordCount = post.content.replace(/<[^>]+>/g, '').length; %>
+        ~<%= Math.max(1, Math.ceil(wordCount / 500)) %> <span data-i18n="post.min_read"><%= __('post.min_read') %></span>
+      </span>
+    <% } %>
+  </div>
+</article>

@@ -1,0 +1,80 @@
+<%- partial('partial/head') %>
+<%- partial('partial/header') %>
+
+<main id="main-content">
+  <article class="post-container" itemscope itemtype="http://schema.org/Article">
+    <% var headerImage = page.headimg || page.cover || page.thumbnail; %>
+    <% if (headerImage) { %>
+      <div class="post-header-cover" aria-hidden="true">
+        <img
+          src="<%= url_for(headerImage) %>"
+          alt="<%= __('post.cover_alt') %> <%= page.title %>"
+          itemprop="image"
+          id="postCoverImage"
+        >
+      </div>
+    <% } %>
+
+    <header class="post-header">
+      <h1 class="post-title kinetic-title" itemprop="headline"><%= page.title %></h1>
+
+      <div class="post-meta">
+        <time datetime="<%= date(page.date, 'YYYY-MM-DD') %>" itemprop="datePublished">
+          <%= date(page.date, theme.post.date_format) %>
+        </time>
+        <span class="post-meta-sep" aria-hidden="true">·</span>
+        <span itemprop="author"><%= config.author %></span>
+        <% if (theme.post.reading_time) { %>
+          <span class="post-meta-sep" aria-hidden="true">·</span>
+          <span>
+            <% var textContent = page.content.replace(/<[^>]+>/g, ''); %>
+            ~<%= Math.max(1, Math.ceil(textContent.length / 500)) %> <span data-i18n="post.min_read"><%= __('post.min_read') %></span>
+          </span>
+        <% } %>
+      </div>
+
+      <% if (page.tags && page.tags.length) { %>
+        <div class="post-tags">
+          <% page.tags.forEach(function(tag) { %>
+            <a href="<%= url_for('/tags/' + tag.name) %>" class="tag-pill"><%= tag.name %></a>
+          <% }) %>
+        </div>
+      <% } %>
+    </header>
+
+    <!-- Table of Contents -->
+    <% if (theme.features.toc) { %>
+      <aside class="toc" id="toc" aria-label="<%= __('a11y.toc') %>" data-i18n-attrs="aria-label">
+        <div class="toc-title" data-i18n="post.toc_title"><%= __('post.toc_title') %></div>
+        <ol class="toc-list" id="tocList"></ol>
+      </aside>
+    <% } %>
+
+    <!-- Post Content -->
+    <div class="post-content" itemprop="articleBody">
+      <%- page.content %>
+    </div>
+  </article>
+
+  <!-- Post Navigation -->
+  <% if (page.prev || page.next) { %>
+    <nav class="post-nav" aria-label="<%= __('a11y.adjacent_posts') %>">
+      <% if (page.prev) { %>
+        <a href="<%= url_for(page.prev.path) %>" class="post-nav-item">
+          <div class="post-nav-label" data-i18n="post.prev"><%= __('post.prev') %></div>
+          <div class="post-nav-title"><%= page.prev.title %></div>
+        </a>
+      <% } else { %>
+        <div></div>
+      <% } %>
+      <% if (page.next) { %>
+        <a href="<%= url_for(page.next.path) %>" class="post-nav-item">
+          <div class="post-nav-label" data-i18n="post.next"><%= __('post.next') %></div>
+          <div class="post-nav-title"><%= page.next.title %></div>
+        </a>
+      <% } %>
+    </nav>
+  <% } %>
+</main>
+
+<%- partial('partial/footer') %>

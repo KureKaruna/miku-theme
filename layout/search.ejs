@@ -1,0 +1,26 @@
+<%- partial('partial/head') %>
+<%- partial('partial/header') %>
+
+<main id="main-content">
+  <div class="search-container">
+    <h1 class="page-title kinetic-title" data-i18n="search.title"><%= __('search.title') %></h1>
+
+    <div class="search-input-wrap">
+      <label for="searchInput" class="sr-only" data-i18n="a11y.search_posts"><%= __('a11y.search_posts') %></label>
+      <input
+        type="search"
+        id="searchInput"
+        class="search-input"
+        placeholder="<%= __('search.placeholder') %>"
+        autocomplete="off"
+        aria-label="<%= __('a11y.search_posts') %>"
+        data-i18n-attrs="placeholder aria-label"
+      >
+    </div>
+
+    <div class="search-results-count" id="searchCount" aria-live="polite"></div>
+    <div class="search-results" id="searchResults" aria-live="polite"></div>
+  </div>
+</main>
+
+<%- partial('partial/footer') %>

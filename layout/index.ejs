@@ -1,0 +1,29 @@
+<%- partial('partial/head') %>
+<%- partial('partial/header') %>
+
+<main id="main-content">
+  <!-- Parallax Hero -->
+  <%- partial('partial/parallax-hero') %>
+
+  <!-- Article List -->
+  <section class="article-list" aria-label="<%= __('a11y.recent_posts') %>">
+    <div class="article-cards">
+      <% page.posts.each(function(post) { %>
+        <%- partial('partial/article-card', { post: post }) %>
+      <% }) %>
+    </div>
+
+    <!-- Pagination -->
+    <% if (page.total > 1) { %>
+      <nav class="pagination" aria-label="<%= __('a11y.page_nav') %>">
+        <%- paginator({
+          prev_text: __('pagination.prev'),
+          next_text: __('pagination.next'),
+          escape: false
+        }) %>
+      </nav>
+    <% } %>
+  </section>
+</main>
+
+<%- partial('partial/footer') %>

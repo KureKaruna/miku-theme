@@ -1,0 +1,37 @@
+<%- partial('partial/head') %>
+<%- partial('partial/header') %>
+
+<main id="main-content">
+  <div class="archive-container">
+    <h1 class="page-title kinetic-title" data-i18n="archive.title"><%= __('archive.title') %></h1>
+
+    <% var currentYear = null; %>
+    <% page.posts.each(function(post) { %>
+      <% var postYear = date(post.date, 'YYYY'); %>
+
+      <% if (postYear !== currentYear) { %>
+        <% currentYear = postYear; %>
+        <div class="archive-year"><%= currentYear %></div>
+      <% } %>
+
+      <div class="archive-post">
+        <time class="archive-post-date" datetime="<%= date(post.date, 'YYYY-MM-DD') %>">
+          <%= date(post.date, 'MM-DD') %>
+        </time>
+        <a href="<%= url_for(post.path) %>" class="archive-post-title"><%= post.title %></a>
+      </div>
+    <% }) %>
+
+    <% if (page.total > 1) { %>
+      <nav class="pagination" aria-label="<%= __('a11y.archive_pagination') %>">
+        <%- paginator({
+          prev_text: __('pagination.prev'),
+          next_text: __('pagination.next'),
+          escape: false
+        }) %>
+      </nav>
+    <% } %>
+  </div>
+</main>
+
+<%- partial('partial/footer') %>

@@ -1,0 +1,59 @@
+<!-- Footer -->
+<footer class="footer" role="contentinfo">
+  <p class="footer-copyright" data-i18n="footer.copyright" data-i18n-attrs="text">
+    &copy; <%= theme.copyright.since %>-<%= new Date().getFullYear() %> <%= theme.copyright.author %>.
+    Powered by <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> &amp; miku-theme.
+  </p>
+</footer>
+
+<!-- Complete Language Packs -->
+<script>
+window.MIKU_I18N = {
+  "zh-CN": {
+    "nav.home": "首页", "nav.archives": "归档", "nav.tags": "标签", "nav.about": "关于", "nav.search": "搜索",
+    "a11y.skip_to_content": "跳到主要内容", "a11y.toggle_nav": "切换导航菜单", "a11y.hero_banner": "首屏横幅",
+    "a11y.tag_cloud": "标签云", "a11y.recent_posts": "最新文章", "a11y.page_nav": "分页导航",
+    "a11y.archive_pagination": "归档分页", "a11y.toc": "文章目录", "a11y.adjacent_posts": "相邻文章", "a11y.avatar": "头像",
+    "a11y.search_posts": "搜索文章", "a11y.reading_time": "阅读时间",
+    "hero.scroll_hint": "向下滚动探索",
+    "post.toc_title": "目录", "post.prev": "← 上一篇", "post.next": "下一篇 →", "post.min_read": "分钟阅读",
+    "pagination.prev": "← 上一页", "pagination.next": "下一页 →",
+    "archive.title": "归档", "tags.title": "标签", "tags.empty": "暂无标签，快去写文章吧！",
+    "search.title": "搜索", "search.placeholder": "输入关键词搜索文章...",
+    "search.index_missing": "搜索索引未找到。请先运行 <code>hexo generate</code>。",
+    "search.no_results": "未找到与 &ldquo;%s&rdquo; 相关的文章。", "search.results": "%d 个结果",
+    "category.title": "分类", "category.empty": "暂无分类。",
+    "theme.switch_light": "切换到亮色模式", "theme.switch_dark": "切换到暗色模式",
+    "lang.switch_to": "English", "lang.label": "语言"
+  },
+  "en": {
+    "nav.home": "Home", "nav.archives": "Archives", "nav.tags": "Tags", "nav.about": "About", "nav.search": "Search",
+    "a11y.skip_to_content": "Skip to main content", "a11y.toggle_nav": "Toggle navigation menu",
+    "a11y.hero_banner": "Hero banner", "a11y.tag_cloud": "Tag cloud", "a11y.recent_posts": "Recent posts",
+    "a11y.page_nav": "Page navigation", "a11y.archive_pagination": "Archive pagination",
+    "a11y.toc": "Table of Contents", "a11y.adjacent_posts": "Adjacent posts", "a11y.avatar": "Avatar",
+    "a11y.search_posts": "Search posts", "a11y.reading_time": "Reading time",
+    "hero.scroll_hint": "Scroll to explore",
+    "post.toc_title": "Contents", "post.prev": "← Previous", "post.next": "Next →", "post.min_read": "min read",
+    "pagination.prev": "← Prev", "pagination.next": "Next →",
+    "archive.title": "Archives", "tags.title": "Tags", "tags.empty": "No tags yet. Write some posts!",
+    "search.title": "Search", "search.placeholder": "Type to search posts...",
+    "search.index_missing": "Search index not found. Run <code>hexo generate</code> first.",
+    "search.no_results": "No posts found for &ldquo;%s&rdquo;.", "search.results": "%d results",
+    "category.title": "Categories", "category.empty": "No categories yet.",
+    "theme.switch_light": "Switch to light mode", "theme.switch_dark": "Switch to dark mode",
+    "lang.switch_to": "中文", "lang.label": "Language"
+  }
+};
+</script>
+
+<!-- Scripts -->
+<script src="<%= url_for('/js/main.js') %>"></script>
+<% if (page.layout === 'search' || theme.features.search) { %>
+  <script src="<%= url_for('/js/search.js') %>"></script>
+<% } %>
+<% if (theme.features.parallax && page.layout === 'index') { %>
+  <script src="<%= url_for('/js/parallax.js') %>"></script>
+<% } %>
+</body>
+</html>

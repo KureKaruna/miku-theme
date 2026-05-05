@@ -1,0 +1,1299 @@
+/* ============================================
+   miku-theme — Main Stylesheet
+   Deconstructivist + Neo-futuristic + Kinetic Typography + Parallax
+   ============================================ */
+
+/* ============================================
+   1. Reset & Base
+   ============================================ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--text);
+  background: var(--bg);
+  transition: background var(--duration-normal) var(--ease-out),
+              color var(--duration-normal) var(--ease-out);
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Geometric texture overlay — CSS-only, adapts to theme */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.4;
+  background-image:
+    /* Major grid lines */
+    linear-gradient(90deg, var(--border-light) 1px, transparent 1px),
+    linear-gradient(0deg,   var(--border-light) 1px, transparent 1px),
+    /* Hexagonal/diagonal decoration — neo-futuristic circuit feel */
+    linear-gradient(45deg,  var(--border-light) 1px, transparent 1px),
+    linear-gradient(-45deg, var(--primary-muted) 1px, transparent 1px);
+  background-size:
+    80px 80px,
+    80px 80px,
+    160px 160px,
+    160px 160px;
+  background-position:
+    0 0,
+    0 0,
+    0 0,
+    0 0;
+  transition: opacity var(--duration-normal) var(--ease-out);
+  mask-image: radial-gradient(ellipse at 50% 0%, black 40%, transparent 70%);
+  -webkit-mask-image: radial-gradient(ellipse at 50% 0%, black 40%, transparent 70%);
+}
+
+[data-theme="dark"] body::before {
+  opacity: 0.25;
+}
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+a:hover {
+  color: var(--accent);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+::selection {
+  background: var(--primary-muted);
+  color: var(--text);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-alt); }
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 4px;
+}
+
+/* ============================================
+   2. Typography — Kinetic Typography
+   ============================================ */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+.kinetic-title {
+  display: inline-block;
+  transition: transform var(--duration-normal) var(--ease-spring),
+              color var(--duration-normal) var(--ease-out),
+              text-shadow var(--duration-normal) var(--ease-out);
+  cursor: default;
+}
+
+.kinetic-title:hover {
+  transform: scale(1.08);
+  color: var(--accent);
+  text-shadow: 2px 2px 0 var(--primary-glow), -2px -2px 0 var(--accent-glow);
+}
+
+/* Floating text shadow for pull quotes */
+.floating-quote {
+  font-size: 1.35rem;
+  font-style: italic;
+  padding: 1.5rem 2rem;
+  margin: 2rem 0;
+  border-left: 4px solid var(--primary);
+  background: var(--surface-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  position: relative;
+  text-shadow: 0 2px 8px var(--primary-glow);
+  animation: float-shadow 3s ease-in-out infinite;
+}
+
+@keyframes float-shadow {
+  0%, 100% { text-shadow: 0 2px 8px var(--primary-glow); }
+  50%      { text-shadow: 0 4px 18px var(--accent-glow); }
+}
+
+/* ============================================
+   3. Glassmorphism containers
+   ============================================ */
+
+.glass-panel {
+  background: var(--surface-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.glass-card {
+  background: var(--surface-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--duration-normal) var(--ease-spring),
+              box-shadow var(--duration-normal) var(--ease-out);
+}
+
+.glass-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg), var(--shadow-glow-primary);
+}
+
+/* ============================================
+   4. Navbar
+   ============================================ */
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--navbar-height);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  background: var(--surface-glass);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border-bottom: 1px solid var(--border-light);
+  transition: background var(--duration-normal) var(--ease-out),
+              border-color var(--duration-normal) var(--ease-out);
+}
+
+.navbar-brand {
+  font-size: 1.25rem;
+  font-weight: 800;
+  font-family: var(--font-display);
+  color: var(--primary);
+  letter-spacing: -0.03em;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.navbar-brand:hover {
+  color: var(--primary);
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  list-style: none;
+}
+
+.navbar-links a {
+  padding: 0.4rem 0.85rem;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: color var(--duration-fast), background var(--duration-fast);
+}
+
+.navbar-links a:hover,
+.navbar-links a.active {
+  color: var(--primary);
+  background: var(--primary-muted);
+}
+
+/* Theme toggle */
+.theme-toggle {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.4rem 0.6rem;
+  font-size: 1.1rem;
+  line-height: 1;
+  transition: all var(--duration-fast) var(--ease-out);
+  display: flex;
+  align-items: center;
+}
+
+.theme-toggle:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  box-shadow: var(--shadow-glow-primary);
+}
+
+/* Language toggle */
+.lang-toggle {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.35rem 0.6rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: all var(--duration-fast) var(--ease-out);
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.lang-toggle:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  box-shadow: var(--shadow-glow-primary);
+}
+
+/* Mobile nav */
+.navbar-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.25rem;
+}
+
+@media (max-width: 768px) {
+  .navbar-toggle { display: block; }
+
+  .navbar-links {
+    position: fixed;
+    top: var(--navbar-height);
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    background: var(--surface-glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border-light);
+    padding: 0.75rem;
+    gap: 0;
+    transform: translateY(-100%);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform var(--duration-normal) var(--ease-out),
+                opacity var(--duration-normal) var(--ease-out);
+  }
+
+  .navbar-links.open {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .navbar-links a {
+    display: block;
+    padding: 0.65rem 1rem;
+  }
+}
+
+/* ============================================
+   5. Parallax Hero — Homepage
+   ============================================ */
+
+.parallax-hero {
+  position: relative;
+  height: 100vh;
+  min-height: 600px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: calc(-1 * var(--navbar-height));
+  padding-top: var(--navbar-height);
+}
+
+.parallax-layer {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+
+.parallax-layer--bg {
+  z-index: 1;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  /* Placeholder gradient until image is provided */
+  background-image: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+}
+
+.parallax-layer--bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom,
+    transparent 40%,
+    var(--bg) 100%
+  );
+}
+
+.parallax-layer--particles {
+  z-index: 2;
+  pointer-events: none;
+}
+
+.parallax-layer--foreground {
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  pointer-events: none;
+}
+
+.hero-title {
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  color: #FFFFFF;
+  text-shadow: 0 0 80px rgba(57, 197, 187, 0.5),
+               0 4px 20px rgba(0, 0, 0, 0.5);
+  cursor: default;
+  animation: hero-title-enter 1s var(--ease-out);
+}
+
+.hero-subtitle {
+  font-size: clamp(1rem, 2vw, 1.35rem);
+  color: rgba(255, 255, 255, 0.85);
+  margin-top: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  animation: hero-fade-in 1.2s var(--ease-out);
+}
+
+.hero-scroll-hint {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  animation: bounce 2s ease-in-out infinite, hero-fade-in 1.5s var(--ease-out);
+}
+
+@keyframes hero-title-enter {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hero-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50%      { transform: translateX(-50%) translateY(8px); }
+}
+
+/* ============================================
+   6. Article Cards — Deconstructivist Grid
+   ============================================ */
+
+.article-list {
+  max-width: var(--wide-width);
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+}
+
+/* Deconstructivist: staggered, overlapping layout */
+.article-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1.75rem;
+}
+
+.article-card {
+  background: var(--surface-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--duration-normal) var(--ease-spring),
+              box-shadow var(--duration-normal) var(--ease-out);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Stagger effect: odd cards offset */
+.article-card:nth-child(odd) {
+  transform: translateY(-8px);
+}
+
+.article-card:nth-child(3n) {
+  transform: translateY(8px) rotate(-0.5deg);
+}
+
+.article-card:nth-child(3n+1) {
+  transform: translateY(-4px) rotate(0.3deg);
+}
+
+.article-card:hover {
+  transform: translateY(-6px) rotate(0deg) !important;
+  box-shadow: var(--shadow-lg), var(--shadow-glow-primary);
+  z-index: 2;
+}
+
+/* Glow accent line on card top */
+.article-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 12px;
+  right: 12px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  border-radius: 0 0 3px 3px;
+  opacity: 0;
+  transform: scaleX(0.5);
+  transition: opacity var(--duration-normal), transform var(--duration-normal);
+}
+
+.article-card:hover::before {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+.article-card-cover {
+  margin: -1.5rem -1.5rem 1rem -1.5rem;
+  overflow: hidden;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  height: 200px;
+  position: relative;
+}
+
+.article-card-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--duration-slow) var(--ease-out);
+}
+
+.article-card:hover .article-card-cover img {
+  transform: scale(1.05);
+}
+
+.article-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 0.5rem;
+}
+
+.tag-pill {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  padding: 0.15em 0.65em;
+  border-radius: 999px;
+  background: var(--primary-muted);
+  color: var(--primary);
+  transition: background var(--duration-fast), color var(--duration-fast);
+}
+
+.tag-pill:hover {
+  background: var(--primary);
+  color: #fff;
+  text-decoration: none;
+}
+
+.article-card-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 0.4rem;
+}
+
+.article-card-title a {
+  color: var(--text);
+  transition: color var(--duration-fast);
+}
+
+.article-card-title a:hover {
+  color: var(--primary);
+}
+
+.article-card-excerpt {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.75rem;
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.article-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* ============================================
+   7. Post Page
+   ============================================ */
+
+.post-container {
+  max-width: var(--content-width);
+  margin: calc(var(--navbar-height) + 2rem) auto 4rem;
+  padding: 0 1.5rem;
+}
+
+.post-header {
+  margin-bottom: 2.5rem;
+  text-align: center;
+}
+
+.post-header-cover {
+  margin: -2rem -1.5rem 2rem;
+  height: 360px;
+  overflow: hidden;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  position: relative;
+}
+
+.post-header-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Subtle parallax effect on scroll via JS */
+  will-change: transform;
+}
+
+.post-title {
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
+  font-weight: 900;
+  margin-bottom: 0.75rem;
+}
+
+.post-meta {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.post-meta-sep {
+  color: var(--text-muted);
+}
+
+.post-tags {
+  display: flex;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+}
+
+/* Post body content */
+.post-content {
+  font-size: 1.05rem;
+  line-height: 1.85;
+}
+
+.post-content h2 {
+  font-size: 1.6rem;
+  margin-top: 3rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--border);
+  color: var(--primary);
+}
+
+.post-content h3 {
+  font-size: 1.3rem;
+  margin-top: 2.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.post-content p {
+  margin-bottom: 1.25rem;
+}
+
+.post-content ul, .post-content ol {
+  margin-bottom: 1.25rem;
+  padding-left: 1.5rem;
+}
+
+.post-content li {
+  margin-bottom: 0.35rem;
+}
+
+.post-content blockquote {
+  border-left: 4px solid var(--primary);
+  padding: 0.5rem 1.25rem;
+  margin: 1.5rem 0;
+  background: var(--primary-muted);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  color: var(--text-secondary);
+}
+
+.post-content img {
+  border-radius: var(--radius-md);
+  margin: 1.5rem auto;
+  box-shadow: var(--shadow-md);
+}
+
+.post-content hr {
+  border: none;
+  height: 1px;
+  background: var(--border);
+  margin: 2.5rem 0;
+}
+
+.post-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+}
+
+.post-content th, .post-content td {
+  border: 1px solid var(--border);
+  padding: 0.6rem 0.9rem;
+  text-align: left;
+}
+
+.post-content th {
+  background: var(--bg-alt);
+  font-weight: 600;
+}
+
+/* Post navigation */
+.post-nav {
+  max-width: var(--content-width);
+  margin: 0 auto 3rem;
+  padding: 0 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.post-nav-item {
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius-md);
+  background: var(--surface-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-light);
+  transition: box-shadow var(--duration-fast);
+}
+
+.post-nav-item:hover {
+  box-shadow: var(--shadow-glow-primary);
+}
+
+.post-nav-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.post-nav-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-top: 0.2rem;
+}
+
+.post-nav-item:last-child {
+  text-align: right;
+}
+
+/* ============================================
+   8. Table of Contents (TOC)
+   ============================================ */
+
+.toc {
+  position: fixed;
+  left: max(1rem, calc((100vw - var(--content-width)) / 2 - 220px));
+  top: calc(var(--navbar-height) + 2rem);
+  width: 200px;
+  max-height: calc(100vh - var(--navbar-height) - 4rem);
+  overflow-y: auto;
+  font-size: 0.8rem;
+  padding: 1rem;
+  background: var(--surface-glass);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  opacity: 0;
+  transform: translateX(-8px);
+  transition: opacity var(--duration-normal), transform var(--duration-normal);
+  pointer-events: none;
+  z-index: 100;
+}
+
+.toc.visible {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+.toc-title {
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 0.6rem;
+}
+
+.toc-list {
+  list-style: none;
+  padding: 0;
+}
+
+.toc-list li {
+  margin-bottom: 0.3rem;
+}
+
+.toc-list a {
+  color: var(--text-secondary);
+  display: block;
+  padding: 0.2rem 0;
+  border-left: 2px solid transparent;
+  padding-left: 0.6rem;
+  transition: color var(--duration-fast), border-color var(--duration-fast);
+}
+
+.toc-list a:hover,
+.toc-list a.active {
+  color: var(--primary);
+  border-left-color: var(--primary);
+}
+
+.toc-list .toc-h3 {
+  padding-left: 1.25rem;
+}
+
+@media (max-width: 1280px) {
+  .toc { display: none; }
+}
+
+/* ============================================
+   9. Archive Page
+   ============================================ */
+
+.archive-container {
+  max-width: var(--content-width);
+  margin: calc(var(--navbar-height) + 2rem) auto 4rem;
+  padding: 0 1.5rem;
+}
+
+.page-title {
+  font-size: 2.25rem;
+  font-weight: 900;
+  margin-bottom: 2.5rem;
+  text-align: center;
+  letter-spacing: -0.03em;
+}
+
+.archive-year {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--primary);
+  margin: 2.5rem 0 1rem;
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+/* Geometric decoration line */
+.archive-year::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
+  border-radius: 50%;
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+
+.archive-year::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 50%;
+  width: 2px;
+  height: calc(100% + 3rem);
+  background: var(--border);
+  transform: translateY(-50%);
+}
+
+.archive-post {
+  display: flex;
+  align-items: baseline;
+  gap: 1.25rem;
+  padding: 0.6rem 0 0.6rem 1.5rem;
+  border-left: 2px solid var(--border-light);
+  margin-left: 4px;
+  transition: border-color var(--duration-fast);
+  position: relative;
+}
+
+.archive-post:hover {
+  border-left-color: var(--primary);
+}
+
+.archive-post-date {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  min-width: 90px;
+}
+
+.archive-post-title {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text);
+  transition: color var(--duration-fast);
+}
+
+.archive-post-title:hover {
+  color: var(--primary);
+}
+
+/* ============================================
+   10. Tags Page
+   ============================================ */
+
+.tags-container {
+  max-width: var(--content-width);
+  margin: calc(var(--navbar-height) + 2rem) auto 4rem;
+  padding: 0 1.5rem;
+}
+
+/* Neo-futuristic tag cloud */
+.tag-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 3rem;
+}
+
+.tag-cloud-item {
+  display: inline-block;
+  padding: 0.4rem 1rem;
+  border-radius: 999px;
+  font-weight: 600;
+  border: 1.5px solid var(--border);
+  background: var(--surface-glass);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--text-secondary);
+  transition: all var(--duration-fast) var(--ease-spring);
+  cursor: pointer;
+}
+
+.tag-cloud-item:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  box-shadow: var(--shadow-glow-primary);
+  transform: scale(1.08);
+}
+
+.tag-cloud-item.size-xs { font-size: 0.75rem; }
+.tag-cloud-item.size-sm { font-size: 0.85rem; }
+.tag-cloud-item.size-md { font-size: 1rem; }
+.tag-cloud-item.size-lg { font-size: 1.2rem; }
+.tag-cloud-item.size-xl { font-size: 1.5rem; color: var(--accent); }
+
+.tag-section {
+  margin-top: 2.5rem;
+}
+
+.tag-section-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 1rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--border-light);
+}
+
+/* ============================================
+   11. Search Page
+   ============================================ */
+
+.search-container {
+  max-width: var(--content-width);
+  margin: calc(var(--navbar-height) + 2rem) auto 4rem;
+  padding: 0 1.5rem;
+}
+
+.search-input-wrap {
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+.search-input {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  font-size: 1.1rem;
+  font-family: inherit;
+  color: var(--text);
+  background: var(--surface-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-lg);
+  outline: none;
+  transition: border-color var(--duration-fast), box-shadow var(--duration-fast);
+}
+
+.search-input:focus {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-glow-primary);
+}
+
+.search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.search-results-count {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+.search-result-item {
+  padding: 1.25rem;
+  margin-bottom: 0.75rem;
+  border-radius: var(--radius-md);
+  background: var(--surface-glass);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--border-light);
+  transition: box-shadow var(--duration-fast);
+}
+
+.search-result-item:hover {
+  box-shadow: var(--shadow-glow-primary);
+}
+
+.search-result-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+.search-result-excerpt {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.search-result-excerpt mark {
+  background: var(--primary-muted);
+  color: var(--accent);
+  font-weight: 600;
+  padding: 0.05em 0.2em;
+  border-radius: 2px;
+}
+
+.search-empty {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 3rem 0;
+}
+
+/* ============================================
+   12. About Page
+   ============================================ */
+
+.about-container {
+  max-width: var(--content-width);
+  margin: calc(var(--navbar-height) + 2rem) auto 4rem;
+  padding: 0 1.5rem;
+}
+
+.about-card {
+  padding: 2.5rem;
+  text-align: center;
+}
+
+.about-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto 1.25rem;
+  border: 3px solid var(--primary);
+  box-shadow: var(--shadow-glow-primary);
+}
+
+.about-name {
+  font-size: 1.75rem;
+  font-weight: 800;
+  margin-bottom: 0.25rem;
+}
+
+.about-bio {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.7;
+}
+
+.about-content {
+  text-align: left;
+  margin-top: 2rem;
+  line-height: 1.8;
+}
+
+/* ============================================
+   13. Footer
+   ============================================ */
+
+.footer {
+  border-top: 1px solid var(--border-light);
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  margin-top: 4rem;
+}
+
+.footer-copyright {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* ============================================
+   14. Back to Top
+   ============================================ */
+
+.back-to-top {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: var(--text-secondary);
+  font-size: 1.3rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+  transition: all var(--duration-normal) var(--ease-out);
+  z-index: 900;
+}
+
+.back-to-top.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.back-to-top:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  box-shadow: var(--shadow-glow-primary);
+}
+
+/* ============================================
+   15. Pagination
+   ============================================ */
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 2.5rem;
+}
+
+.pagination a,
+.pagination span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  height: 40px;
+  padding: 0 0.75rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all var(--duration-fast);
+}
+
+.pagination a {
+  color: var(--text-secondary);
+  background: var(--surface-glass);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.pagination a:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  box-shadow: var(--shadow-glow-primary);
+}
+
+.pagination .current {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+  font-weight: 700;
+}
+
+/* ============================================
+   16. Category Page
+   ============================================ */
+
+.category-container {
+  max-width: var(--content-width);
+  margin: calc(var(--navbar-height) + 2rem) auto 4rem;
+  padding: 0 1.5rem;
+}
+
+.category-list {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 3rem;
+}
+
+.category-list-item a {
+  display: inline-block;
+  padding: 0.5rem 1.25rem;
+  border-radius: 999px;
+  border: 1.5px solid var(--border);
+  background: var(--surface-glass);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--text-secondary);
+  font-weight: 500;
+  transition: all var(--duration-fast) var(--ease-spring);
+}
+
+.category-list-item a:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  box-shadow: var(--shadow-glow-primary);
+  transform: scale(1.05);
+}
+
+.category-list-item .category-count {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-left: 0.3rem;
+}
+
+/* ============================================
+   17. Section title with geometric decoration
+   ============================================ */
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 2.5rem 0 1.25rem;
+  position: relative;
+  display: inline-block;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  border-radius: 2px;
+}
+
+/* ============================================
+   18. Utility
+   ============================================ */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.container {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* ============================================
+   19. Print styles
+   ============================================ */
+
+@media print {
+  .navbar, .footer, .back-to-top, .toc, .parallax-hero {
+    display: none !important;
+  }
+  body { background: #fff; color: #000; }
+  .post-container { margin-top: 0; }
+}
