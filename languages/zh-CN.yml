@@ -43,6 +43,7 @@ archive:
 
 tags:
   title: 标签
+  back: 返回标签云
   empty: 暂无标签，快去写文章吧！
 
 search:

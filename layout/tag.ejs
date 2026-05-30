@@ -1,0 +1,24 @@
+<%- partial('partial/head') %>
+<%- partial('partial/header') %>
+
+<main id="main-content">
+  <div class="tags-container">
+    <p class="tag-back-link">
+      <a href="<%= url_for('/tags/') %>">&larr; <span data-i18n="tags.back"><%= __('tags.back') %></span></a>
+    </p>
+
+    <h1 class="page-title kinetic-title"># <%= page.tag %></h1>
+
+    <% if (page.posts && page.posts.length) { %>
+      <div class="article-cards">
+        <% page.posts.each(function(post) { %>
+          <%- partial('partial/article-card', { post: post }) %>
+        <% }) %>
+      </div>
+    <% } else { %>
+      <p class="search-empty" data-i18n="tags.empty"><%= __('tags.empty') %></p>
+    <% } %>
+  </div>
+</main>
+
+<%- partial('partial/footer') %>

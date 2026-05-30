@@ -48,6 +48,22 @@ window.MIKU_I18N = {
 </script>
 
 <!-- Scripts -->
+<% if (page.layout === 'post' && page.content && (page.content.indexOf('$') !== -1 || page.content.indexOf('\\(') !== -1 || page.content.indexOf('\\[') !== -1)) { %>
+  <script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
+      processEscapes: true,
+      processEnvironments: true
+    },
+    options: {
+      skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+  };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<% } %>
 <script src="<%= url_for('/js/main.js') %>"></script>
 <% if (page.layout === 'search' || theme.features.search) { %>
   <script src="<%= url_for('/js/search.js') %>"></script>

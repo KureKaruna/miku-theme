@@ -43,6 +43,7 @@ archive:
 
 tags:
   title: Tags
+  back: Back to Tags
   empty: No tags yet. Write some posts!
 
 search:

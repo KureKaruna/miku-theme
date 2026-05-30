@@ -219,6 +219,12 @@
         var targetId = this.getAttribute('data-target');
         var target = document.getElementById(targetId);
         if (target) {
+          // Immediately update highlight — don't wait for IntersectionObserver
+          tocList.querySelectorAll('a').forEach(function (link) {
+            link.classList.remove('active');
+          });
+          this.classList.add('active');
+
           target.scrollIntoView({ behavior: 'smooth', block: 'start' });
           history.replaceState(null, '', '#' + targetId);
         }
@@ -230,6 +236,10 @@
 
     // Show TOC
     toc.classList.add('visible');
+
+    // Read scroll-padding-top from CSS to keep rootMargin in sync with --navbar-height
+    var scrollPad = parseInt(getComputedStyle(document.documentElement).scrollPaddingTop, 10) || 0;
+    var rootMargin = '-' + (scrollPad + 6) + 'px 0px -60% 0px';
 
     // Active heading tracking via IntersectionObserver
     var observer = new IntersectionObserver(function (entries) {
@@ -244,12 +254,152 @@
           if (activeLink) activeLink.classList.add('active');
         }
       });
-    }, { rootMargin: '-80px 0px -60% 0px' });
+    }, { rootMargin: rootMargin });
 
     headings.forEach(function (h) { observer.observe(h); });
+
+    // Handle page load hash — scroll with navbar offset + highlight TOC link
+    if (window.location.hash) {
+      var hashId = window.location.hash.slice(1);
+      var hashTarget = document.getElementById(hashId);
+      if (hashTarget) {
+        setTimeout(function () {
+          hashTarget.scrollIntoView({ block: 'start' });
+          var hashLink = tocList.querySelector('a[data-target="' + hashId + '"]');
+          if (hashLink) {
+            tocList.querySelectorAll('a').forEach(function (l) { l.classList.remove('active'); });
+            hashLink.classList.add('active');
+          }
+        }, 100);
+      }
+    }
+  }
+
+  // ============================================
+  // Tag Cloud — click interception & scroll highlight
+  // ============================================
+
+  function initTagCloud() {
+    var cloud = document.querySelector('.tag-cloud');
+    if (!cloud) return;
+
+    // --- Intercept clicks to avoid browser history pollution ---
+    cloud.querySelectorAll('a').forEach(function (link) {
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        var href = this.getAttribute('href');
+        if (!href || href.charAt(0) !== '#') return;
+        var target = document.getElementById(href.slice(1));
+        if (!target) return;
+
+        // Immediately update active state
+        cloud.querySelectorAll('a').forEach(function (a) {
+          a.classList.remove('active');
+        });
+        this.classList.add('active');
+
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        history.replaceState(null, '', href);
+      });
+    });
+
+    // --- IntersectionObserver for scroll-based highlighting ---
+    var sections = document.querySelectorAll('.tag-section');
+    if (sections.length === 0) return;
+
+    var scrollPad = parseInt(
+      getComputedStyle(document.documentElement).scrollPaddingTop, 10
+    ) || 0;
+    var rootMargin = '-' + (scrollPad + 6) + 'px 0px -60% 0px';
+
+    var sectionObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          var sectionId = entry.target.id;
+          cloud.querySelectorAll('a').forEach(function (a) {
+            a.classList.remove('active');
+          });
+          var active = cloud.querySelector('a[href="#' + sectionId + '"]');
+          if (active) active.classList.add('active');
+        }
+      });
+    }, { rootMargin: rootMargin });
+
+    sections.forEach(function (s) { sectionObserver.observe(s); });
+  }
+
+  // ============================================
+  // Code Copy Buttons
+  // ============================================
+
+  function initCodeCopyButtons() {
+    var blocks = document.querySelectorAll('.post-content figure.highlight');
+    if (!blocks.length) return;
+
+    function fallbackCopy(text) {
+      var textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.setAttribute('readonly', '');
+      textarea.style.position = 'fixed';
+      textarea.style.top = '-9999px';
+      textarea.style.left = '-9999px';
+      document.body.appendChild(textarea);
+      textarea.select();
+
+      var ok = false;
+      try {
+        ok = document.execCommand('copy');
+      } finally {
+        document.body.removeChild(textarea);
+      }
+      return ok ? Promise.resolve() : Promise.reject(new Error('copy failed'));
+    }
+
+    blocks.forEach(function (figure) {
+      if (figure.querySelector('.code-copy-btn')) return;
+
+      var codePre = figure.querySelector('.code pre');
+      if (!codePre) return;
+
+      var button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'code-copy-btn';
+      button.textContent = '\u590D\u5236';
+      button.setAttribute('aria-label', '\u590D\u5236\u4EE3\u7801');
+
+      button.addEventListener('click', function () {
+        var text = codePre.innerText || codePre.textContent || '';
+        text = text.replace(/\n$/, '');
+
+        if (!text) return;
+
+        var copyTask = navigator.clipboard && navigator.clipboard.writeText
+          ? navigator.clipboard.writeText(text)
+          : fallbackCopy(text);
+
+        copyTask.then(function () {
+          button.textContent = '\u5DF2\u590D\u5236';
+          button.classList.add('is-copied');
+          button.classList.remove('is-error');
+        }).catch(function () {
+          button.textContent = '\u590D\u5236\u5931\u8D25';
+          button.classList.add('is-error');
+          button.classList.remove('is-copied');
+        }).finally(function () {
+          setTimeout(function () {
+            button.textContent = '\u590D\u5236';
+            button.classList.remove('is-copied', 'is-error');
+          }, 1500);
+        });
+      });
+
+      figure.appendChild(button);
+    });
   }
 
   buildTOC();
+  initTagCloud();
+  initCodeCopyButtons();
 
   // ============================================
   // Keyboard navigation

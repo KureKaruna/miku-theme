@@ -15,6 +15,7 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: var(--navbar-height);
   -webkit-text-size-adjust: 100%;
 }
 
@@ -922,23 +923,34 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 0.75rem;
+  align-items: center;
+  gap: 0.5rem;
   margin-bottom: 3rem;
 }
 
 .tag-cloud-item {
-  display: inline-block;
-  padding: 0.4rem 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  min-height: 2rem;
+  padding: 0.2rem 0.7rem;
   border-radius: 999px;
-  font-weight: 600;
+  font-weight: 500;
   border: 1.5px solid var(--border);
   background: var(--surface-glass);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   color: var(--text-secondary);
   transition: all var(--duration-fast) var(--ease-spring);
-  cursor: pointer;
 }
+
+/* Size modifiers — declared BEFORE hover/active so hover/active colors win */
+.tag-cloud-item.size-xs { font-size: 0.65rem; }
+.tag-cloud-item.size-sm { font-size: 0.72rem; }
+.tag-cloud-item.size-md { font-size: 0.8rem; }
+.tag-cloud-item.size-lg { font-size: 0.95rem; }
+.tag-cloud-item.size-xl { font-size: 1.15rem; color: var(--accent); }
 
 .tag-cloud-item:hover {
   border-color: var(--primary);
@@ -947,11 +959,27 @@ h1, h2, h3, h4, h5, h6 {
   transform: scale(1.08);
 }
 
-.tag-cloud-item.size-xs { font-size: 0.75rem; }
-.tag-cloud-item.size-sm { font-size: 0.85rem; }
-.tag-cloud-item.size-md { font-size: 1rem; }
-.tag-cloud-item.size-lg { font-size: 1.2rem; }
-.tag-cloud-item.size-xl { font-size: 1.5rem; color: var(--accent); }
+.tag-cloud-item.active {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: #fff;
+  box-shadow: var(--shadow-glow-primary);
+}
+
+.tag-back-link {
+  margin-bottom: 0.5rem;
+}
+
+.tag-back-link a {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  transition: color var(--duration-fast);
+}
+
+.tag-back-link a:hover {
+  color: var(--primary);
+  text-decoration: none;
+}
 
 .tag-section {
   margin-top: 2.5rem;
