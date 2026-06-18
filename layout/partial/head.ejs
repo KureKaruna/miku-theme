@@ -44,6 +44,29 @@
   <!-- RSS -->
   <link rel="alternate" href="<%= url_for('/atom.xml') %>" type="application/atom+xml" title="<%= config.title %>">
 
+  <!-- Inline theme script — must run before CSS to prevent flash of incorrect theme -->
+  <script>
+    (function () {
+      var stored = localStorage.getItem('miku-theme-pref');
+      var theme = (stored === 'dark' || stored === 'light') ? stored : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+
+      // Motion gate: flip <html> to .motion-on synchronously so the CSS reveal
+      // rules engage before first paint. Reduced-motion users get .motion-off
+      // and a fully visible, animation-free page. main.js may later adjust this.
+      var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      document.documentElement.classList.add(reduceMotion ? 'motion-off' : 'motion-on');
+    })();
+  </script>
+
+  <!-- Theme-aware hero background images (light base + dark overlay for crossfade) -->
+  <style>
+    :root {
+      --hero-light-bg: url('<%= url_for('/images/hero-light-bg.webp') %>');
+      --hero-dark-bg: url('<%= url_for('/images/hero-dark-bg.webp') %>');
+    }
+  </style>
+
   <!-- Stylesheets -->
   <link rel="stylesheet" href="<%= url_for('/css/variables.css') %>">
   <link rel="stylesheet" href="<%= url_for('/css/style.css') %>">
@@ -59,6 +82,6 @@
   <link rel="icon" href="<%= url_for('/images/favicon.png') %>" type="image/png" sizes="32x32">
   <link rel="apple-touch-icon" href="<%= url_for('/images/favicon.png') %>">
 </head>
-<body>
+<body class="<%= is_home() ? 'is-home' : '' %>">
   <!-- Skip to content for accessibility -->
   <a href="#main-content" class="sr-only" style="position:absolute;top:0;left:0;z-index:9999;background:var(--primary);color:#fff;padding:0.5rem 1rem;border-radius:0 0 4px 0;"><%= __('a11y.skip_to_content') %></a>

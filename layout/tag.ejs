@@ -3,22 +3,16 @@
 
 <main id="main-content">
   <div class="tags-container">
-    <p class="tag-back-link">
-      <a href="<%= url_for('/tags/') %>">&larr; <span data-i18n="tags.back"><%= __('tags.back') %></span></a>
-    </p>
-
     <h1 class="page-title kinetic-title"># <%= page.tag %></h1>
-
-    <% if (page.posts && page.posts.length) { %>
-      <div class="article-cards">
-        <% page.posts.each(function(post) { %>
-          <%- partial('partial/article-card', { post: post }) %>
-        <% }) %>
-      </div>
-    <% } else { %>
-      <p class="search-empty" data-i18n="tags.empty"><%= __('tags.empty') %></p>
-    <% } %>
+    <p class="search-empty">
+      <span data-i18n="tags.moved"><%= __('tags.moved') %></span>
+      <a href="<%= url_for('/search/?tag=' + encodeURIComponent(page.tag)) %>" data-i18n="tags.go_search"><%= __('tags.go_search') %></a>
+    </p>
   </div>
 </main>
+
+<script>
+  window.location.replace(<%- JSON.stringify(url_for('/search/?tag=' + encodeURIComponent(page.tag))) %>);
+</script>
 
 <%- partial('partial/footer') %>

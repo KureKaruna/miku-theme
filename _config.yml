@@ -5,7 +5,6 @@
 nav:
   Home: /
   Archives: /archives/
-  Tags: /tags/
   About: /about/
   Search: /search/
 
@@ -13,7 +12,6 @@ nav:
 copyright:
   since: 2026
   author: Blog Author
-
 # Theme features
 features:
   toc: true           # auto-generate table of contents on posts

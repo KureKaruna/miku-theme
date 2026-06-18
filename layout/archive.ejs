@@ -3,32 +3,98 @@
 
 <main id="main-content">
   <div class="archive-container">
-    <h1 class="page-title kinetic-title" data-i18n="archive.title"><%= __('archive.title') %></h1>
+    <h1 class="page-title kinetic-title reveal" data-i18n="archive.title"><%= __('archive.title') %></h1>
 
-    <% var currentYear = null; %>
-    <% page.posts.each(function(post) { %>
-      <% var postYear = date(post.date, 'YYYY'); %>
+    <%
+      var archivePerPage = 10;
+      if (config.archive_generator && typeof config.archive_generator.per_page !== 'undefined') {
+        archivePerPage = Number(config.archive_generator.per_page) || 0;
+      } else if (typeof config.per_page !== 'undefined') {
+        archivePerPage = Number(config.per_page) || 10;
+      }
+      var archivePostSlots = page.posts.length;
+      var archiveYearSlots = 0;
+      var archiveAllPosts = [];
+      site.posts.sort(config.archive_generator && config.archive_generator.order_by || '-date').each(function(post) {
+        var inCurrentArchive = true;
+        if (typeof page.year !== 'undefined') inCurrentArchive = inCurrentArchive && post.date.year() === page.year;
+        if (typeof page.month !== 'undefined') inCurrentArchive = inCurrentArchive && post.date.month() + 1 === page.month;
+        if (typeof page.day !== 'undefined') inCurrentArchive = inCurrentArchive && post.date.date() === page.day;
+        if (inCurrentArchive) archiveAllPosts.push(post);
+      });
+      var archivePageSize = archivePerPage || archiveAllPosts.length || page.posts.length;
+      for (var pageStart = 0; pageStart < archiveAllPosts.length; pageStart += archivePageSize) {
+        var pageSlice = archiveAllPosts.slice(pageStart, pageStart + archivePageSize);
+        var pageYears = 0;
+        var pageYear = null;
+        pageSlice.forEach(function(post) {
+          var postYear = date(post.date, 'YYYY');
+          if (postYear !== pageYear) {
+            pageYear = postYear;
+            pageYears += 1;
+          }
+        });
+        archivePostSlots = Math.max(archivePostSlots, pageSlice.length);
+        archiveYearSlots = Math.max(archiveYearSlots, pageYears);
+      }
+      if (!archiveYearSlots && page.posts.length) archiveYearSlots = 1;
+      var paginationDir = config.pagination_dir || 'page';
+      var archiveBase = page.base || '';
+      var archiveFormat = paginationDir + '/%d/';
+      function archivePageUrl(pageNumber) {
+        var pagePath = pageNumber === 1 ? archiveBase : archiveBase + archiveFormat.replace('%d', pageNumber);
+        return url_for(pagePath);
+      }
+    %>
 
-      <% if (postYear !== currentYear) { %>
-        <% currentYear = postYear; %>
-        <div class="archive-year"><%= currentYear %></div>
+    <div class="archive-list reveal-stagger" style="--archive-post-slots: <%= archivePostSlots %>; --archive-year-slots: <%= archiveYearSlots %>;">
+      <% var currentYear = null; %>
+      <% var currentPageYearSlots = 0; %>
+      <% page.posts.each(function(post) { %>
+        <% var postYear = date(post.date, 'YYYY'); %>
+
+        <% if (postYear !== currentYear) { %>
+          <% currentYear = postYear; %>
+          <% currentPageYearSlots += 1; %>
+          <div class="archive-year"><%= currentYear %></div>
+        <% } %>
+
+        <div class="archive-post">
+          <time class="archive-post-date" datetime="<%= date(post.date, 'YYYY-MM-DD') %>">
+            <%= date(post.date, 'MM-DD') %>
+          </time>
+          <a href="<%= url_for(post.path) %>" class="archive-post-title"><%= post.title %></a>
+        </div>
+      <% }) %>
+      <% for (var missingPost = page.posts.length; missingPost < archivePostSlots; missingPost++) { %>
+        <div class="archive-post archive-post--placeholder" aria-hidden="true">
+          <time class="archive-post-date">00-00</time>
+          <span class="archive-post-title" data-i18n="archive.placeholder">你看不见我</span>
+        </div>
       <% } %>
-
-      <div class="archive-post">
-        <time class="archive-post-date" datetime="<%= date(post.date, 'YYYY-MM-DD') %>">
-          <%= date(post.date, 'MM-DD') %>
-        </time>
-        <a href="<%= url_for(post.path) %>" class="archive-post-title"><%= post.title %></a>
-      </div>
-    <% }) %>
+      <% for (var missingYear = currentPageYearSlots; missingYear < archiveYearSlots; missingYear++) { %>
+        <div class="archive-year archive-year--placeholder" aria-hidden="true">0000</div>
+      <% } %>
+    </div>
 
     <% if (page.total > 1) { %>
-      <nav class="pagination" aria-label="<%= __('a11y.archive_pagination') %>">
-        <%- paginator({
-          prev_text: __('pagination.prev'),
-          next_text: __('pagination.next'),
-          escape: false
-        }) %>
+      <nav class="pagination archive-pagination" aria-label="<%= __('a11y.archive_pagination') %>">
+        <div class="archive-pagination__side archive-pagination__side--prev">
+          <% if (page.current > 1) { %>
+            <a class="extend prev" rel="prev" href="<%= archivePageUrl(page.current - 1) %>"><%= __('pagination.prev') %></a>
+          <% } %>
+        </div>
+        <div class="archive-pagination__pages">
+          <%- paginator({
+            prev_next: false,
+            escape: false
+          }) %>
+        </div>
+        <div class="archive-pagination__side archive-pagination__side--next">
+          <% if (page.current < page.total) { %>
+            <a class="extend next" rel="next" href="<%= archivePageUrl(page.current + 1) %>"><%= __('pagination.next') %></a>
+          <% } %>
+        </div>
       </nav>
     <% } %>
   </div>

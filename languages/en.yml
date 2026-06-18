@@ -5,6 +5,10 @@ nav:
   about: About
   search: Search
 
+home:
+  latest_posts: Latest Posts
+  view_archives: View all archives →
+
 a11y:
   skip_to_content: Skip to main content
   main_nav: Main navigation
@@ -24,9 +28,6 @@ a11y:
   social_links: Social links
   avatar: Avatar
 
-hero:
-  scroll_hint: Scroll to explore
-
 post:
   toc_title: Contents
   prev: ← Previous
@@ -45,12 +46,20 @@ tags:
   title: Tags
   back: Back to Tags
   empty: No tags yet. Write some posts!
+  moved: Tags have moved into the search page.
+  go_search: Go to search
 
 search:
   title: Search
+  placeholder: Type to search posts...
   index_missing: Search index not found. Run <code>hexo generate</code> first.
-  no_results: No posts found for &ldquo;%s&rdquo;.
+  no_results: No posts found for “%s”.
   results: '%d results'
+  tags_title: Filter by tag
+  all_tags: All tags
+  clear_filters: Clear filters
+  current_tag: 'Current tag: %s'
+  tag_results: '%d posts tagged “%s”'
 
 category:
   title: Categories
@@ -59,6 +68,10 @@ category:
 theme:
   switch_light: Switch to light mode
   switch_dark: Switch to dark mode
+
+effects:
+  turn_off: Disable ambient effects
+  turn_on: Enable ambient effects
 
 lang:
   switch_to: 中文

@@ -11,7 +11,7 @@ hexo.extend.filter.register('marked:extensions', function(extensions) {
       return match ? match.index + match[1].length : undefined;
     },
     tokenizer(src) {
-      const match = /^( {0,3})\$\$\s*\n([\s\S]+?)\n\1\$\$(?=\n|$)/.exec(src);
+      const match = /^( {0,3})\$\$\s*\n?([\s\S]+?)\n?\s*\$\$(?=\n|$)/.exec(src);
       if (!match) return;
 
       return {

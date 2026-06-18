@@ -5,7 +5,7 @@
   <article class="post-container" itemscope itemtype="http://schema.org/Article">
     <% var headerImage = page.headimg || page.cover || page.thumbnail; %>
     <% if (headerImage) { %>
-      <div class="post-header-cover" aria-hidden="true">
+      <div class="post-header-cover reveal" aria-hidden="true">
         <img
           src="<%= url_for(headerImage) %>"
           alt="<%= __('post.cover_alt') %> <%= page.title %>"
@@ -15,7 +15,7 @@
       </div>
     <% } %>
 
-    <header class="post-header">
+    <header class="post-header reveal">
       <h1 class="post-title kinetic-title" itemprop="headline"><%= page.title %></h1>
 
       <div class="post-meta">
@@ -36,7 +36,7 @@
       <% if (page.tags && page.tags.length) { %>
         <div class="post-tags">
           <% page.tags.forEach(function(tag) { %>
-            <a href="<%= url_for('/tags/' + tag.name) %>" class="tag-pill"><%= tag.name %></a>
+            <a href="<%= url_for('/search/?tag=' + encodeURIComponent(tag.name)) %>" class="tag-pill"><%= tag.name %></a>
           <% }) %>
         </div>
       <% } %>
@@ -60,7 +60,7 @@
   <% if (page.prev || page.next) { %>
     <nav class="post-nav" aria-label="<%= __('a11y.adjacent_posts') %>">
       <% if (page.prev) { %>
-        <a href="<%= url_for(page.prev.path) %>" class="post-nav-item">
+        <a href="<%= url_for(page.prev.path) %>" class="post-nav-item reveal">
           <div class="post-nav-label" data-i18n="post.prev"><%= __('post.prev') %></div>
           <div class="post-nav-title"><%= page.prev.title %></div>
         </a>
@@ -68,7 +68,7 @@
         <div></div>
       <% } %>
       <% if (page.next) { %>
-        <a href="<%= url_for(page.next.path) %>" class="post-nav-item">
+        <a href="<%= url_for(page.next.path) %>" class="post-nav-item reveal">
           <div class="post-nav-label" data-i18n="post.next"><%= __('post.next') %></div>
           <div class="post-nav-title"><%= page.next.title %></div>
         </a>

@@ -5,27 +5,27 @@
 
 :root {
   /* === Core palette === */
-  --primary: #39C5BB;
-  --primary-glow: rgba(57, 197, 187, 0.35);
-  --primary-muted: rgba(57, 197, 187, 0.12);
-  --accent: #E3007F;
-  --accent-glow: rgba(227, 0, 127, 0.3);
+  --primary: #e898a8;
+  --primary-glow: rgba(232, 152, 168, 0.34);
+  --primary-muted: rgba(232, 152, 168, 0.16);
+  --accent: #bc7a8a;
+  --accent-glow: rgba(188, 122, 138, 0.28);
 
   /* === Light mode (default) === */
-  --bg: #F8FAFC;
-  --bg-alt: #EEF2F6;
-  --surface: #FFFFFF;
-  --surface-glass: rgba(255, 255, 255, 0.72);
-  --text: #0F172A;
-  --text-secondary: #475569;
-  --text-muted: #94A3B8;
-  --border: #E2E8F0;
-  --border-light: rgba(226, 232, 240, 0.6);
+  --bg: #FFFCFA;
+  --bg-alt: #F8EFED;
+  --surface: #FFF7F5;
+  --surface-glass: rgba(255, 247, 245, 0.76);
+  --text: #2e2e2e;
+  --text-secondary: #6b5a5a;
+  --text-muted: #9a8585;
+  --border: #ead7d3;
+  --border-light: rgba(234, 215, 211, 0.62);
 
   /* === Shadows === */
-  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
-  --shadow-md: 0 4px 16px rgba(15, 23, 42, 0.08);
-  --shadow-lg: 0 12px 40px rgba(15, 23, 42, 0.12);
+  --shadow-sm: 0 1px 2px rgba(84, 51, 51, 0.06);
+  --shadow-md: 0 4px 16px rgba(84, 51, 51, 0.08);
+  --shadow-lg: 0 12px 40px rgba(84, 51, 51, 0.12);
   --shadow-glow-primary: 0 0 24px var(--primary-glow);
   --shadow-glow-accent: 0 0 18px var(--accent-glow);
 
@@ -43,12 +43,24 @@
   --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
   --font-display: 'Inter', 'Noto Sans SC', sans-serif;
 
-  /* === Transitions === */
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* === Transitions ===
+     Single shared motion vocabulary. CSS and the JS motion controller
+     (main.js TIMING) read the same names so curves/durations never drift
+     between the two layers. Keep this list small and deliberate. */
+  --ease-standard: cubic-bezier(0.2, 0, 0.2, 1);   /* neutral UI feedback */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);       /* primary ease: reveals, hover */
+  --ease-in-out: cubic-bezier(0.65, 0.05, 0.36, 1);/* symmetric motion */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);/* overshoot: emphasis only */
   --duration-fast: 150ms;
   --duration-normal: 300ms;
   --duration-slow: 500ms;
+
+  /* === Reveal language (entrance animations) ===
+     Magnitude and cadence of the unified reveal system. The JS controller
+     only toggles .is-visible; the actual motion lives here. */
+  --reveal-distance: 24px;
+  --reveal-duration: var(--duration-normal);
+  --reveal-stagger: 35ms;
 }
 
 /* ============================================
@@ -56,6 +68,12 @@
    ============================================ */
 
 [data-theme="dark"] {
+  --primary: #39C5BB;
+  --primary-glow: rgba(57, 197, 187, 0.35);
+  --primary-muted: rgba(57, 197, 187, 0.12);
+  --accent: #E3007F;
+  --accent-glow: rgba(227, 0, 127, 0.3);
+
   --bg: #0F172A;
   --bg-alt: #162032;
   --surface: #1E293B;

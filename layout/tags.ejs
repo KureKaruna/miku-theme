@@ -3,49 +3,16 @@
 
 <main id="main-content">
   <div class="tags-container">
-    <h1 class="page-title kinetic-title" data-i18n="tags.title"><%= __('tags.title') %></h1>
-
-    <!-- Tag Cloud -->
-    <% if (site.tags && site.tags.length) { %>
-      <div class="tag-cloud" aria-label="<%= __('a11y.tag_cloud') %>">
-        <% var tagSizes = {}; %>
-        <% var maxCount = 0; var minCount = Infinity; %>
-        <% site.tags.each(function(tag) { %>
-          <% if (tag.posts.length > maxCount) maxCount = tag.posts.length; %>
-          <% if (tag.posts.length < minCount) minCount = tag.posts.length; %>
-        <% }) %>
-
-        <%
-          var sizes = ['xs', 'sm', 'md', 'lg', 'xl'];
-          function getSize(count) {
-            if (maxCount === minCount) return sizes[2];
-            var ratio = (count - minCount) / (maxCount - minCount);
-            return sizes[Math.min(sizes.length - 1, Math.floor(ratio * sizes.length))];
-          }
-        %>
-
-        <% site.tags.each(function(tag) { %>
-          <a href="#tag-<%= tag.name %>" class="tag-cloud-item size-<%= getSize(tag.posts.length) %>">
-            <%= tag.name %>
-          </a>
-        <% }) %>
-      </div>
-
-      <!-- Tag Sections -->
-      <% site.tags.each(function(tag) { %>
-        <section class="tag-section" id="tag-<%= tag.name %>">
-          <h2 class="tag-section-title"># <%= tag.name %></h2>
-          <div class="article-cards">
-            <% tag.posts.each(function(post) { %>
-              <%- partial('partial/article-card', { post: post }) %>
-            <% }) %>
-          </div>
-        </section>
-      <% }) %>
-    <% } else { %>
-      <p class="search-empty" data-i18n="tags.empty"><%= __('tags.empty') %></p>
-    <% } %>
+    <h1 class="page-title kinetic-title" data-i18n="search.title"><%= __('search.title') %></h1>
+    <p class="search-empty">
+      <span data-i18n="tags.moved"><%= __('tags.moved') %></span>
+      <a href="<%= url_for('/search/') %>" data-i18n="tags.go_search"><%= __('tags.go_search') %></a>
+    </p>
   </div>
 </main>
+
+<script>
+  window.location.replace(<%- JSON.stringify(url_for('/search/')) %>);
+</script>
 
 <%- partial('partial/footer') %>

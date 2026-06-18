@@ -3,9 +3,56 @@
 
 <main id="main-content">
   <div class="search-container">
-    <h1 class="page-title kinetic-title" data-i18n="search.title"><%= __('search.title') %></h1>
+    <h1 class="page-title kinetic-title reveal" data-i18n="search.title"><%= __('search.title') %></h1>
 
-    <div class="search-input-wrap">
+    <% if (site.tags && site.tags.length) { %>
+      <div class="search-tag-panel reveal">
+        <div class="search-tag-header">
+          <h2 class="search-tag-title" data-i18n="search.tags_title"><%= __('search.tags_title') %></h2>
+          <button type="button" class="search-clear-filters" id="searchClearFilters" data-i18n="search.clear_filters">
+            <%= __('search.clear_filters') %>
+          </button>
+        </div>
+
+        <div class="tag-cloud search-tag-cloud" aria-label="<%= __('a11y.tag_cloud') %>">
+          <% var maxCount = 0; var minCount = Infinity; %>
+          <% site.tags.each(function(tag) { %>
+            <% if (tag.posts.length > maxCount) maxCount = tag.posts.length; %>
+            <% if (tag.posts.length < minCount) minCount = tag.posts.length; %>
+          <% }) %>
+
+          <%
+            var sizes = ['xs', 'sm', 'md', 'lg', 'xl'];
+            function getSize(count) {
+              if (maxCount === minCount) return sizes[2];
+              var ratio = (count - minCount) / (maxCount - minCount);
+              return sizes[Math.min(sizes.length - 1, Math.floor(ratio * sizes.length))];
+            }
+          %>
+
+          <button
+            type="button"
+            class="tag-cloud-item tag-filter size-md active"
+            data-tag=""
+            aria-pressed="true"
+            data-i18n="search.all_tags"
+          ><%= __('search.all_tags') %></button>
+          <% site.tags.each(function(tag) { %>
+            <button
+              type="button"
+              class="tag-cloud-item tag-filter size-<%= getSize(tag.posts.length) %>"
+              data-tag="<%= tag.name %>"
+              aria-pressed="false"
+            >
+              <%= tag.name %>
+              <span class="tag-filter-count"><%= tag.posts.length %></span>
+            </button>
+          <% }) %>
+        </div>
+      </div>
+    <% } %>
+
+    <div class="search-input-wrap reveal">
       <label for="searchInput" class="sr-only" data-i18n="a11y.search_posts"><%= __('a11y.search_posts') %></label>
       <input
         type="search"
@@ -14,10 +61,12 @@
         placeholder="<%= __('search.placeholder') %>"
         autocomplete="off"
         aria-label="<%= __('a11y.search_posts') %>"
+        data-i18n-aria-label="a11y.search_posts"
         data-i18n-attrs="placeholder aria-label"
       >
     </div>
 
+    <div class="search-active-filter" id="searchActiveFilter" aria-live="polite"></div>
     <div class="search-results-count" id="searchCount" aria-live="polite"></div>
     <div class="search-results" id="searchResults" aria-live="polite"></div>
   </div>

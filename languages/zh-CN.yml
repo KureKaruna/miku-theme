@@ -5,6 +5,10 @@ nav:
   about: 关于
   search: 搜索
 
+home:
+  latest_posts: 最新文章
+  view_archives: 查看全部归档 →
+
 a11y:
   skip_to_content: 跳到主要内容
   main_nav: 主导航
@@ -24,9 +28,6 @@ a11y:
   social_links: 社交链接
   avatar: 头像
 
-hero:
-  scroll_hint: 向下滚动探索
-
 post:
   toc_title: 目录
   prev: ← 上一篇
@@ -45,12 +46,20 @@ tags:
   title: 标签
   back: 返回标签云
   empty: 暂无标签，快去写文章吧！
+  moved: 标签已经整合到搜索页。
+  go_search: 前往搜索
 
 search:
   title: 搜索
+  placeholder: 输入关键词搜索文章...
   index_missing: 搜索索引未找到。请先运行 <code>hexo generate</code>。
-  no_results: 未找到与 &ldquo;%s&rdquo; 相关的文章。
+  no_results: 未找到与“%s”相关的文章。
   results: '%d 个结果'
+  tags_title: 按标签筛选
+  all_tags: 全部标签
+  clear_filters: 清除筛选
+  current_tag: 当前标签：%s
+  tag_results: '标签“%s”下有 %d 篇文章'
 
 category:
   title: 分类
@@ -59,6 +68,10 @@ category:
 theme:
   switch_light: 切换到亮色模式
   switch_dark: 切换到暗色模式
+
+effects:
+  turn_off: 关闭飘落特效
+  turn_on: 开启飘落特效
 
 lang:
   switch_to: English

@@ -25,10 +25,29 @@ body {
   line-height: 1.7;
   color: var(--text);
   background: var(--bg);
-  transition: background var(--duration-normal) var(--ease-out),
-              color var(--duration-normal) var(--ease-out);
+  /* transition on body is intentionally absent — prevents a visible theme-switch
+     animation that would flash on page navigation when dark mode is active */
   overflow-x: hidden;
   position: relative;
+}
+
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1200;
+  height: 2px;
+  background: linear-gradient(90deg, var(--primary), var(--accent), var(--primary));
+  box-shadow: 0 0 14px var(--primary-glow);
+  transform: scaleX(0);
+  transform-origin: left center;
+  pointer-events: none;
+}
+
+.spotlight-surface {
+  --spot-x: 50%;
+  --spot-y: 50%;
 }
 
 /* Geometric texture overlay — CSS-only, adapts to theme */
@@ -66,13 +85,13 @@ body::before {
 }
 
 a {
-  color: var(--primary);
+  color: var(--accent);
   text-decoration: none;
   transition: color var(--duration-fast) var(--ease-out);
 }
 
 a:hover {
-  color: var(--accent);
+  color: var(--primary);
 }
 
 img {
@@ -132,7 +151,7 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 0 var(--radius-md) var(--radius-md) 0;
   position: relative;
   text-shadow: 0 2px 8px var(--primary-glow);
-  animation: float-shadow 3s ease-in-out infinite;
+  animation: float-shadow 3s var(--ease-in-out) infinite;
 }
 
 @keyframes float-shadow {
@@ -220,7 +239,26 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--text-secondary);
   font-size: 0.9rem;
   font-weight: 500;
-  transition: color var(--duration-fast), background var(--duration-fast);
+  position: relative;
+  transition: color var(--duration-fast) var(--ease-out),
+              background var(--duration-fast) var(--ease-out);
+}
+
+.navbar-links a::after {
+  content: '';
+  position: absolute;
+  left: 0.75rem;
+  right: 0.75rem;
+  bottom: 0.22rem;
+  height: 1px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  box-shadow: 0 0 10px var(--primary-glow);
+  transform: scaleX(0);
+  transform-origin: center;
+  opacity: 0;
+  transition: transform var(--duration-normal) var(--ease-out),
+              opacity var(--duration-normal) var(--ease-out);
 }
 
 .navbar-links a:hover,
@@ -229,26 +267,115 @@ h1, h2, h3, h4, h5, h6 {
   background: var(--primary-muted);
 }
 
+.navbar-links a:hover::after,
+.navbar-links a.active::after {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
 /* Theme toggle */
 .theme-toggle {
-  background: none;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  color: var(--text-secondary);
-  cursor: pointer;
-  padding: 0.4rem 0.6rem;
-  font-size: 1.1rem;
-  line-height: 1;
-  transition: all var(--duration-fast) var(--ease-out);
-  display: flex;
+  position: relative;                       /* positioning context for stacked SVGs */
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
+  background: var(--surface-glass);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);          /* matches cards / archive button */
+  color: var(--primary);                    /* currentColor drives the SVG strokes */
+  cursor: pointer;
+  line-height: 1;
+  transition: background var(--duration-fast) var(--ease-out),
+              border-color var(--duration-fast) var(--ease-out),
+              color var(--duration-fast) var(--ease-out),
+              box-shadow var(--duration-fast) var(--ease-out);
 }
 
 .theme-toggle:hover {
   border-color: var(--primary);
-  color: var(--primary);
   box-shadow: var(--shadow-glow-primary);
 }
+
+/* Stacked sun/moon icons: one fades out & spins away while the other spins in.
+   Driven purely by the .is-dark class toggled on the button by main.js. */
+.theme-toggle-icon {
+  position: relative;
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+}
+
+.theme-icon {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform-origin: 50% 50%;
+  transition: opacity var(--duration-normal) var(--ease-out),
+              transform var(--duration-normal) var(--ease-spring);   /* spring = slight overshoot */
+}
+
+/* Light state (default): moon in, sun spun out. */
+.theme-icon--moon { opacity: 1; transform: rotate(0deg) scale(1); }
+.theme-icon--sun  { opacity: 0; transform: rotate(-90deg) scale(0.4); }
+
+/* Dark state: sun spins in, moon spins away. */
+.theme-toggle.is-dark .theme-icon--sun  { opacity: 1; transform: rotate(0deg) scale(1); }
+.theme-toggle.is-dark .theme-icon--moon { opacity: 0; transform: rotate(90deg) scale(0.4); }
+
+/* Effects toggle (sakura / rain) — mirrors theme-toggle animation */
+.effects-toggle {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-glass);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--primary);
+  cursor: pointer;
+  line-height: 1;
+  transition: background var(--duration-fast) var(--ease-out),
+              border-color var(--duration-fast) var(--ease-out),
+              color var(--duration-fast) var(--ease-out),
+              box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.effects-toggle:hover {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-glow-primary);
+}
+
+.effects-toggle-icon {
+  position: relative;
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+}
+
+.effects-icon {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform-origin: 50% 50%;
+  transition: opacity var(--duration-normal) var(--ease-out),
+              transform var(--duration-normal) var(--ease-spring);
+}
+
+/* Default: effects ON — sakura visible, off hidden */
+.effects-icon--on  { opacity: 1; transform: rotate(0deg) scale(1); }
+.effects-icon--off { opacity: 0; transform: rotate(-90deg) scale(0.4); }
+
+/* Effects OFF — off icon spins in, sakura spins away */
+.effects-toggle.is-off .effects-icon--on  { opacity: 0; transform: rotate(90deg) scale(0.4); }
+.effects-toggle.is-off .effects-icon--off { opacity: 1; transform: rotate(0deg) scale(1); }
 
 /* Language toggle */
 .lang-toggle {
@@ -261,7 +388,10 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 0.8rem;
   font-weight: 600;
   letter-spacing: 0.02em;
-  transition: all var(--duration-fast) var(--ease-out);
+  transition: background var(--duration-fast) var(--ease-out),
+              border-color var(--duration-fast) var(--ease-out),
+              color var(--duration-fast) var(--ease-out),
+              box-shadow var(--duration-fast) var(--ease-out);
   display: flex;
   align-items: center;
   white-space: nowrap;
@@ -322,15 +452,23 @@ h1, h2, h3, h4, h5, h6 {
    5. Parallax Hero — Homepage
    ============================================ */
 
+body.is-home {
+  overflow: hidden;
+}
+
+.is-home .home-main {
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
 .parallax-hero {
   position: relative;
   height: 100vh;
-  min-height: 600px;
+  height: 100dvh;
+  min-height: 0;
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: calc(-1 * var(--navbar-height));
+  margin-top: 0;
   padding-top: var(--navbar-height);
 }
 
@@ -344,94 +482,633 @@ h1, h2, h3, h4, h5, h6 {
   z-index: 1;
   background-size: cover;
   background-position: center;
+  background-attachment: fixed;
   background-repeat: no-repeat;
-  /* Placeholder gradient until image is provided */
-  background-image: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  background-image: var(--hero-light-bg, linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%));
+  will-change: auto;
+  isolation: isolate;
+}
+
+.parallax-layer--bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-image: var(--hero-dark-bg, linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%));
+  opacity: 0;
+  transition: opacity var(--duration-slow) var(--ease-out);
+  pointer-events: none;
+}
+
+[data-theme="dark"] .parallax-layer--bg::before {
+  opacity: 1;
 }
 
 .parallax-layer--bg::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom,
-    transparent 40%,
-    var(--bg) 100%
-  );
+  background: none;
 }
 
-.parallax-layer--particles {
-  z-index: 2;
-  pointer-events: none;
-}
+/* Layer promotion is applied transiently via the .will-animate utility class
+   (see "Unified reveal language" above) instead of being pinned permanently
+   on ~17 selectors. Promoting layers that aren't currently animating wastes
+   memory and can cause its own jank; the controller adds .will-animate right
+   before an element animates and removes it once it settles. */
 
 .parallax-layer--foreground {
+  --hero-footer-space: 3.25rem;
+  --hero-block-gap: clamp(0.85rem, 2.4vh, 2rem);
+  --hero-card-gap: clamp(0.5rem, 1.3vh, 1rem);
   z-index: 4;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto auto;          /* both rows take content height */
+  align-content: start;                   /* pin column to top, let bg breathe below */
+  align-items: stretch;
+  justify-items: stretch;
+  justify-content: flex-start;
+  text-align: left;
   position: relative;
   pointer-events: none;
+  height: 100%;
+  width: 50vw;
+  max-width: 50vw;
+  gap: var(--hero-block-gap);
+  padding: clamp(1rem, 2.5vh, 2rem) 1.5rem var(--hero-footer-space);
+}
+
+.hero-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(0.85rem, 1.5vh, 1.35rem);
+  width: 100%;
+  min-width: 0;
+  padding-top: 0;
 }
 
 .hero-title {
-  font-size: clamp(2.5rem, 6vw, 5rem);
+  display: flex;
+  flex-direction: column;
+  font-size: clamp(4.8rem, 9.2vw, 10.5rem);
   font-weight: 900;
   letter-spacing: -0.04em;
   color: #FFFFFF;
-  text-shadow: 0 0 80px rgba(57, 197, 187, 0.5),
+  text-shadow: 0 0 80px var(--primary-glow),
                0 4px 20px rgba(0, 0, 0, 0.5);
   cursor: default;
-  animation: hero-title-enter 1s var(--ease-out);
+  line-height: 1.08;
+  max-width: 100%;
+}
+
+.hero-title span {
+  display: block;
 }
 
 .hero-subtitle {
-  font-size: clamp(1rem, 2vw, 1.35rem);
+  font-size: clamp(0.95rem, 1.25vw, 1.35rem);
   color: rgba(255, 255, 255, 0.85);
-  margin-top: 0.75rem;
+  margin-top: 0;
   font-weight: 400;
-  letter-spacing: 0.05em;
-  animation: hero-fade-in 1.2s var(--ease-out);
+  letter-spacing: 0.02em;
+  max-width: 34rem;
 }
 
-.hero-scroll-hint {
-  position: absolute;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 4;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 0.8rem;
-  letter-spacing: 0.1em;
+.hero-posts {
+  width: 100%;
+  min-width: 0;
+  height: auto;                           /* no longer stretched to fill */
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--hero-card-gap);
+  margin-top: 0;                          /* spacing moved to .hero-posts-section */
+  padding-bottom: 0;
+}
+
+/* ---- Hero posts section: label + cards + archive link -----------------
+   The whole cluster is pinned to the left quarter of the viewport
+   (half of the 50vw foreground column) so the hero background keeps its
+   right-side breathing room. */
+
+.hero-posts-section {
+  width: 25vw;
+  max-width: 25vw;
+  min-width: 0;
+  margin-top: clamp(1.5rem, 4vh, 3rem);   /* breathing room under the title block */
+}
+
+.hero-posts-label {
+  margin: 0 0 0.6rem;
+  padding-left: clamp(0.8rem, 1.4vw, 1.1rem);
+  font-size: clamp(0.8rem, 1vw, 1rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  animation: bounce 2s ease-in-out infinite, hero-fade-in 1.5s var(--ease-out);
+  color: rgba(255, 255, 255, 0.9);
 }
 
-@keyframes hero-title-enter {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
+.hero-archive-link {
+  pointer-events: auto;                    /* foreground layer is none; re-enable clicks */
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  align-self: flex-start;                  /* size to content, don't stretch the narrow column */
+  margin-top: clamp(0.9rem, 2vh, 1.3rem);
+  padding: 0.5rem clamp(0.8rem, 1.4vw, 1.1rem);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-left: 3px solid var(--primary);   /* accent rail, same as the text cards */
+  border-radius: var(--radius-md);         /* match card radius, not a pill */
+  background: var(--surface-glass);        /* glass surface, same as the cards */
+  color: var(--primary);                   /* primary text keeps its entry-call role */
+  font-size: clamp(0.82rem, 1vw, 0.95rem);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  box-shadow: var(--shadow-md);
+  transition: transform var(--duration-normal) var(--ease-spring),
+              box-shadow var(--duration-normal) var(--ease-out),
+              border-color var(--duration-normal) var(--ease-out);
+}
+
+.hero-archive-link:hover,
+.hero-archive-link:focus-visible {
+  transform: translateY(-2px);             /* lift, mirroring the card hover language */
+  box-shadow: var(--shadow-lg), var(--shadow-glow-primary);
+  border-color: var(--primary);
+  text-decoration: none;
+}
+
+.hero-archive-link:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.hero-post-card {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  min-height: 0;
+  height: 100%;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--surface-glass);
+  box-shadow: var(--shadow-md);
+  transition: transform var(--duration-normal) var(--ease-spring),
+              box-shadow var(--duration-normal) var(--ease-out),
+              border-color var(--duration-normal) var(--ease-out);
+  pointer-events: auto;
+}
+
+.hero-post-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg), var(--shadow-glow-primary);
+  border-color: var(--primary);
+}
+
+.hero-post-card__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.hero-post-card__bg img,
+.hero-post-card__fallback {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: top;
+  transition: transform var(--duration-slow) var(--ease-out),
+              filter var(--duration-normal) var(--ease-out);
+  will-change: transform;
+}
+
+.hero-post-card__fallback {
+  background-image: var(--hero-light-bg, linear-gradient(135deg, #111827 0%, #1f2937 55%, #111827 100%));
+  background-size: cover;
+  background-position: top;
+}
+
+[data-theme="dark"] .hero-post-card__fallback {
+  background-image: var(--hero-dark-bg, linear-gradient(135deg, #111827 0%, #1f2937 55%, #111827 100%));
+}
+
+.hero-post-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(90deg,
+    rgba(0, 0, 0, 0.55) 0%,
+    rgba(0, 0, 0, 0.42) 28%,
+    rgba(0, 0, 0, 0.18) 60%,
+    rgba(0, 0, 0, 0.05) 100%
+  );
+}
+
+.hero-post-card::after {
+  content: '';
+  position: absolute;
+  inset: -35% -55%;
+  z-index: 4;
+  pointer-events: none;
+  background: linear-gradient(115deg,
+    transparent 35%,
+    rgba(255, 255, 255, 0.22) 48%,
+    transparent 62%
+  );
+  opacity: 0;
+  transform: translateX(-38%) rotate(8deg);
+  transition: opacity var(--duration-normal) var(--ease-out),
+              transform var(--duration-slow) var(--ease-out);
+}
+
+.hero-post-card:hover::after,
+.hero-post-card:focus-visible::after {
+  opacity: 1;
+  transform: translateX(38%) rotate(8deg);
+}
+
+[data-theme="dark"] .hero-post-card::before {
+  background: linear-gradient(90deg,
+    rgba(0, 0, 0, 0.65) 0%,
+    rgba(0, 0, 0, 0.46) 28%,
+    rgba(0, 0, 0, 0.22) 60%,
+    rgba(0, 0, 0, 0.08) 100%
+  );
+}
+
+.hero-post-card__content {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 0.4rem;
+  width: 100%;
+  padding: clamp(0.7rem, 1vw, 0.9rem);
+  color: #fff;
+  transition: transform var(--duration-normal) var(--ease-out);
+}
+
+.hero-post-card:hover .hero-post-card__content,
+.hero-post-card:focus-visible .hero-post-card__content {
+  transform: translateY(-2px);
+}
+
+.hero-post-card:hover .hero-post-card__bg img,
+.hero-post-card:hover .hero-post-card__fallback,
+.hero-post-card:focus-visible .hero-post-card__bg img,
+.hero-post-card:focus-visible .hero-post-card__fallback {
+  filter: saturate(1.08) contrast(1.03);
+}
+
+.hero-post-card__title {
+  font-size: clamp(1.1rem, 1.45vw, 1.55rem);
+  line-height: 1.05;
+  font-weight: 900;
+  color: #fff;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.hero-post-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: center;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+/* ---- Text-only hero cards (homepage redesign) ---------------------------
+   Replaces the old full-cover-image cards. Inherits the base .hero-post-card
+   hover lift/glow, but strips the image-driven pseudo-elements and restyles
+   the content into two lines: a headline row (index | title) over a meta row
+   (date · reading time), so it stays readable inside the narrow 25vw cluster. */
+
+.hero-post-card--text {
+  min-height: 0;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-left: 3px solid var(--primary);                       /* accent rail */
+  border-radius: var(--radius-md);
+  padding: clamp(0.6rem, 1.2vh, 0.9rem) clamp(0.8rem, 1.4vw, 1.1rem);
+}
+
+/* Disable the image-card decorations so they don't paint over text cards. */
+.hero-post-card--text::before,
+.hero-post-card--text::after { content: none; }
+
+.hero-post-card--text .hero-post-card__bg { display: none; }
+
+.hero-post-card--text .hero-post-card__content {
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 0.3rem;
+  padding: 0;
+}
+
+.hero-post-card__headline {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.hero-post-card__index {
+  flex: 0 0 auto;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  font-size: 0.85em;
+  letter-spacing: 0.05em;
+  color: var(--primary);
+}
+
+.hero-post-card--text .hero-post-card__title {
+  flex: 1 1 auto;
+  min-width: 0;
+  -webkit-line-clamp: 1;                                       /* single-line list look */
+  line-clamp: 1;
+}
+
+.hero-post-card--text .hero-post-card__meta {
+  flex-wrap: nowrap;
+}
+
+.footer {
+  border-top: 1px solid var(--border-light);
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  margin-top: 4rem;
+}
+
+.footer-copyright {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.is-home .footer {
+  border-top: 0;
+  padding: 0 1.5rem 1.5rem;
+  margin-top: 0;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.is-home .footer-copyright {
+  pointer-events: auto;
+}
+
+/* ============================================
+   Unified reveal language
+   ----------------------------------------------
+   One entrance vocabulary for the whole theme.
+   The JS motion controller (main.js) only toggles
+   .is-visible and assigns the per-child --i index;
+   all timing/curves live here so CSS and JS never
+   drift apart.
+
+   Visibility gating: the hidden/off-stage state
+   applies ONLY when <html> has .motion-on (added by
+   the head inline script). Without JS, or under
+   prefers-reduced-motion (the controller switches to
+   .motion-off), every reveal target is simply
+   visible — no flash, no transform, no layout shift.
+   ============================================ */
+
+.motion-on .reveal {
+  opacity: 0;
+  transform: translate3d(0, var(--reveal-distance), 0) scale(0.985);
+  transition: opacity var(--reveal-duration) var(--ease-out),
+              transform var(--reveal-duration) var(--ease-out);
+  transition-delay: calc(var(--i, 0) * var(--reveal-stagger));
+}
+
+.motion-on .reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Staggered groups: each direct child is a reveal step; JS assigns --i. */
+.motion-on .reveal-stagger > * {
+  opacity: 0;
+  transform: translate3d(0, var(--reveal-distance), 0) scale(0.985);
+  transition: opacity var(--reveal-duration) var(--ease-out),
+              transform var(--reveal-duration) var(--ease-out);
+  transition-delay: calc(var(--i, 0) * var(--reveal-stagger));
+}
+.reveal-stagger.is-visible > *,
+.reveal-stagger > *.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Lighter variant for dense lists (tags, archive rows). */
+.motion-on .reveal-subtle {
+  opacity: 0;
+  transform: translate3d(0, 10px, 0);
+  transition: opacity var(--duration-fast) var(--ease-out),
+              transform var(--duration-fast) var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 18ms);
+}
+.reveal-subtle.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Interactive lift — pure CSS replacement for the old JS quickTo hover/focus
+   tweens. Targets the same elements; the browser now interpolates the lift on
+   transform with the shared ease so every interactive element rises in unison. */
+.lift-on-hover {
+  transition: transform var(--duration-fast) var(--ease-out),
+              background var(--duration-fast) var(--ease-out),
+              border-color var(--duration-fast) var(--ease-out),
+              color var(--duration-fast) var(--ease-out),
+              box-shadow var(--duration-fast) var(--ease-out);
+}
+@media (hover: hover) {
+  .lift-on-hover:hover {
+    transform: translateY(-2px) scale(1.015);
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+}
+.lift-on-hover:focus-visible {
+  transform: translateY(-1px) scale(1.01);
 }
 
-@keyframes hero-fade-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+/* Transient layer promotion hint. The controller adds this just before an
+   element animates and removes it once the transition settles, so we never
+   leave dozens of layers promoted permanently (the old will-change sprawl). */
+.will-animate {
+  will-change: transform, opacity;
 }
 
-@keyframes bounce {
-  0%, 100% { transform: translateX(-50%) translateY(0); }
-  50%      { transform: translateX(-50%) translateY(8px); }
+/* ============================================
+   Hero entrance choreography (home only)
+   ----------------------------------------------
+   CSS keyframe ladder replaces the old GSAP hero
+   timeline. The controller adds .hero-enter to the
+   hero section on load; stages cascade via delays.
+   ============================================ */
+
+.hero-enter .parallax-layer--bg {
+  animation: hero-bg-rise 1.15s var(--ease-out) both;
+}
+.hero-enter .hero-title span {
+  opacity: 0;
+  animation: hero-line-rise 0.85s var(--ease-out) both;
+}
+.hero-enter .hero-title span:nth-child(1) { animation-delay: 0.08s; }
+.hero-enter .hero-title span:nth-child(2) { animation-delay: 0.2s; }
+.hero-enter .hero-subtitle {
+  opacity: 0;
+  animation: hero-line-rise 0.6s var(--ease-out) 0.42s both;
+}
+.hero-enter .hero-posts .hero-post-card {
+  opacity: 0;
+  animation: hero-card-rise 0.65s var(--ease-out) both;
+}
+.hero-enter .hero-posts .hero-post-card:nth-child(1) { animation-delay: 0.55s; }
+.hero-enter .hero-posts .hero-post-card:nth-child(2) { animation-delay: 0.66s; }
+.hero-enter .hero-posts .hero-post-card:nth-child(3) { animation-delay: 0.77s; }
+.hero-enter .hero-archive-link {
+  opacity: 0;
+  animation: hero-card-rise 0.65s var(--ease-out) 0.88s both;   /* follows the 3 cards */
+}
+.hero-enter.is-home-footer .footer-copyright,
+.is-home .footer-copyright.hero-enter-target {
+  animation: hero-footer-rise 0.45s var(--ease-out) 0.95s both;
+}
+
+@keyframes hero-bg-rise {
+  from { opacity: 0; transform: scale(1.06); filter: blur(8px); }
+  to   { opacity: 1; transform: scale(1);   filter: blur(0); }
+}
+@keyframes hero-line-rise {
+  from { opacity: 0; transform: translateY(0.42em); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes hero-card-rise {
+  from { opacity: 0; transform: translate3d(-28px, 18px, 0) scale(0.98); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+@keyframes hero-footer-rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* ============================================
    6. Article Cards — Deconstructivist Grid
    ============================================ */
+
+@media (min-width: 901px) {
+  .parallax-layer--foreground {
+    padding-left: clamp(1.5rem, 3vw, 3rem);
+    padding-right: clamp(1rem, 2vw, 2rem);
+  }
+}
+
+@media (max-width: 900px) {
+  .home-main {
+    height: 100vh;
+    height: 100dvh;
+  }
+
+  .parallax-hero {
+    min-height: 0;
+  }
+
+  .parallax-layer--foreground {
+    --hero-footer-space: 5.25rem;
+    --hero-block-gap: clamp(0.65rem, 1.8vh, 1rem);
+    --hero-card-gap: clamp(0.45rem, 1vh, 0.7rem);
+    width: 100%;
+    max-width: 100%;
+    padding: 0.9rem 1rem var(--hero-footer-space);
+  }
+
+  .hero-copy {
+    width: 100%;
+  }
+
+  .hero-title {
+    font-size: clamp(4rem, 18vw, 8rem);
+  }
+
+  .hero-subtitle {
+    font-size: clamp(0.9rem, 3.4vw, 1.2rem);
+    max-width: 28rem;
+    margin-top: 0.45rem;
+  }
+
+  .hero-posts {
+    width: 100%;
+  }
+
+  /* Foreground is full-width here, so the 25vw cluster would be too cramped. */
+  .hero-posts-section {
+    width: 60%;
+    max-width: 60%;
+  }
+
+  .hero-post-card {
+    min-height: 0;
+  }
+
+  .hero-post-card__content {
+    padding: 0.85rem 0.9rem 0.9rem 0.9rem;
+    gap: 0.45rem;
+  }
+
+  /* Text cards carry their own padding on the card itself; keep content flush. */
+  .hero-post-card--text .hero-post-card__content {
+    padding: 0;
+    gap: 0.45rem;
+  }
+}
+
+@media (max-width: 560px) {
+  .hero-title {
+    font-size: clamp(3.7rem, 22vw, 6rem);
+  }
+
+  .hero-post-card__title {
+    font-size: clamp(1rem, 5.4vw, 1.35rem);
+    max-width: 100%;
+  }
+
+  .hero-post-card__meta {
+    font-size: 0.72rem;
+  }
+
+  /* Foreground is full-width and tight; let the cluster breathe. */
+  .hero-posts-section {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* Allow longer titles to wrap to two lines on phones. */
+  .hero-post-card--text .hero-post-card__title {
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+}
 
 .article-list {
   max-width: var(--wide-width);
@@ -454,8 +1131,9 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: var(--radius-md);
   padding: 1.5rem;
   box-shadow: var(--shadow-sm);
-  transition: transform var(--duration-normal) var(--ease-spring),
-              box-shadow var(--duration-normal) var(--ease-out);
+  transition: border-color var(--duration-normal) var(--ease-out),
+              box-shadow var(--duration-normal) var(--ease-out),
+              background var(--duration-normal) var(--ease-out);
   position: relative;
   overflow: hidden;
 }
@@ -474,8 +1152,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .article-card:hover {
-  transform: translateY(-6px) rotate(0deg) !important;
-  box-shadow: var(--shadow-lg), var(--shadow-glow-primary);
+  border-color: var(--primary);
+  box-shadow: var(--shadow-md), var(--shadow-glow-primary);
   z-index: 2;
 }
 
@@ -491,12 +1169,27 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 0 0 3px 3px;
   opacity: 0;
   transform: scaleX(0.5);
-  transition: opacity var(--duration-normal), transform var(--duration-normal);
+  transition: opacity var(--duration-normal) var(--ease-out),
+              transform var(--duration-normal) var(--ease-out);
+}
+
+.article-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle 220px at var(--spot-x) var(--spot-y), var(--primary-muted), transparent 64%);
+  opacity: 0;
+  transition: opacity var(--duration-normal) var(--ease-out);
 }
 
 .article-card:hover::before {
   opacity: 1;
   transform: scaleX(1);
+}
+
+.article-card:hover::after {
+  opacity: 1;
 }
 
 .article-card-cover {
@@ -534,12 +1227,13 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 999px;
   background: var(--primary-muted);
   color: var(--primary);
-  transition: background var(--duration-fast), color var(--duration-fast);
+  transition: background var(--duration-fast) var(--ease-out),
+              color var(--duration-fast) var(--ease-out);
 }
 
 .tag-pill:hover {
   background: var(--primary);
-  color: #fff;
+  color: var(--text);
   text-decoration: none;
 }
 
@@ -552,7 +1246,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .article-card-title a {
   color: var(--text);
-  transition: color var(--duration-fast);
+  transition: color var(--duration-fast) var(--ease-out);
 }
 
 .article-card-title a:hover {
@@ -583,6 +1277,9 @@ h1, h2, h3, h4, h5, h6 {
    ============================================ */
 
 .post-container {
+  --reveal-distance: 14px;
+  --reveal-duration: var(--duration-fast);
+  --reveal-stagger: 18ms;
   max-width: var(--content-width);
   margin: calc(var(--navbar-height) + 2rem) auto 4rem;
   padding: 0 1.5rem;
@@ -647,14 +1344,36 @@ h1, h2, h3, h4, h5, h6 {
   margin-top: 3rem;
   margin-bottom: 1rem;
   padding-bottom: 0.4rem;
-  border-bottom: 2px solid var(--border);
+  border-bottom: 1px solid var(--border-light);
   color: var(--primary);
+  position: relative;
+}
+
+.post-content h2::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: min(8rem, 42%);
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  box-shadow: 0 0 12px var(--primary-glow);
 }
 
 .post-content h3 {
   font-size: 1.3rem;
   margin-top: 2.5rem;
   margin-bottom: 0.75rem;
+  color: var(--text);
+  text-shadow: 0 0 0 transparent;
+  transition: color var(--duration-fast) var(--ease-out),
+              text-shadow var(--duration-fast) var(--ease-out);
+}
+
+.post-content h3:hover {
+  color: var(--primary);
+  text-shadow: 0 0 10px var(--primary-glow);
 }
 
 .post-content p {
@@ -726,11 +1445,32 @@ h1, h2, h3, h4, h5, h6 {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--border-light);
-  transition: box-shadow var(--duration-fast);
+  position: relative;
+  overflow: hidden;
+  transition: border-color var(--duration-fast) var(--ease-out),
+              box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.post-nav-item::after,
+.about-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: radial-gradient(circle 240px at var(--spot-x) var(--spot-y), var(--primary-muted), transparent 68%);
+  opacity: 0;
+  transition: opacity var(--duration-normal) var(--ease-out);
 }
 
 .post-nav-item:hover {
+  border-color: var(--primary);
   box-shadow: var(--shadow-glow-primary);
+}
+
+.post-nav-item:hover::after,
+.about-card:hover::after {
+  opacity: 1;
 }
 
 .post-nav-label {
@@ -770,7 +1510,8 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: var(--radius-md);
   opacity: 0;
   transform: translateX(-8px);
-  transition: opacity var(--duration-normal), transform var(--duration-normal);
+  transition: opacity var(--duration-normal) var(--ease-out),
+              transform var(--duration-normal) var(--ease-out);
   pointer-events: none;
   z-index: 100;
 }
@@ -803,15 +1544,41 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--text-secondary);
   display: block;
   padding: 0.2rem 0;
-  border-left: 2px solid transparent;
   padding-left: 0.6rem;
-  transition: color var(--duration-fast), border-color var(--duration-fast);
+  position: relative;
+  transition: color var(--duration-fast) var(--ease-out),
+              text-shadow var(--duration-fast) var(--ease-out);
+}
+
+.toc-list a::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.35rem;
+  bottom: 0.35rem;
+  width: 2px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--primary), var(--accent));
+  box-shadow: 0 0 0 transparent;
+  transform: scaleY(0.18);
+  transform-origin: center;
+  opacity: 0;
+  transition: transform var(--duration-normal) var(--ease-out),
+              opacity var(--duration-normal) var(--ease-out),
+              box-shadow var(--duration-normal) var(--ease-out);
 }
 
 .toc-list a:hover,
 .toc-list a.active {
   color: var(--primary);
-  border-left-color: var(--primary);
+  text-shadow: 0 0 10px var(--primary-glow);
+}
+
+.toc-list a:hover::before,
+.toc-list a.active::before {
+  opacity: 1;
+  transform: scaleY(1);
+  box-shadow: 0 0 12px var(--primary-glow);
 }
 
 .toc-list .toc-h3 {
@@ -830,6 +1597,9 @@ h1, h2, h3, h4, h5, h6 {
   max-width: var(--content-width);
   margin: calc(var(--navbar-height) + 2rem) auto 4rem;
   padding: 0 1.5rem;
+  --timeline-progress: 0;
+  --archive-post-row-height: 2.75rem;
+  --archive-year-slot-height: 4.25rem;
 }
 
 .page-title {
@@ -860,7 +1630,9 @@ h1, h2, h3, h4, h5, h6 {
   height: 8px;
   background: var(--accent);
   border-radius: 50%;
-  box-shadow: 0 0 12px var(--accent-glow);
+  box-shadow: 0 0 0 transparent;
+  transition: box-shadow var(--duration-slow) var(--ease-out),
+              transform var(--duration-slow) var(--ease-out);
 }
 
 .archive-year::after {
@@ -870,23 +1642,56 @@ h1, h2, h3, h4, h5, h6 {
   top: 50%;
   width: 2px;
   height: calc(100% + 3rem);
-  background: var(--border);
-  transform: translateY(-50%);
+  background: linear-gradient(180deg, var(--primary), var(--accent), var(--border));
+  transform: translateY(-50%) scaleY(var(--timeline-progress));
+  transform-origin: top;
+  opacity: 0.5;
+  transition: transform var(--duration-slow) var(--ease-out),
+              opacity var(--duration-normal) var(--ease-out);
+}
+
+.archive-container.timeline-lit {
+  --timeline-progress: 1;
+}
+
+.archive-container.timeline-lit .archive-year::after {
+  opacity: 0.85;
+}
+
+.archive-year.is-lit::before {
+  transform: translateY(-50%) scale(1.28);
+  box-shadow: 0 0 14px var(--accent-glow), 0 0 28px var(--primary-glow);
+}
+
+.archive-list {
+  min-height: calc(
+    var(--archive-post-slots, 10) * var(--archive-post-row-height) +
+    var(--archive-year-slots, 1) * var(--archive-year-slot-height)
+  );
 }
 
 .archive-post {
   display: flex;
   align-items: baseline;
   gap: 1.25rem;
+  min-height: var(--archive-post-row-height);
   padding: 0.6rem 0 0.6rem 1.5rem;
   border-left: 2px solid var(--border-light);
   margin-left: 4px;
-  transition: border-color var(--duration-fast);
+  transition: border-color var(--duration-normal) var(--ease-out),
+              background var(--duration-normal) var(--ease-out);
   position: relative;
 }
 
 .archive-post:hover {
   border-left-color: var(--primary);
+  background: linear-gradient(90deg, var(--primary-muted), transparent 55%);
+}
+
+.archive-post--placeholder,
+.archive-year--placeholder {
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .archive-post-date {
@@ -898,10 +1703,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .archive-post-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-size: 1rem;
   font-weight: 500;
   color: var(--text);
-  transition: color var(--duration-fast);
+  transition: color var(--duration-fast) var(--ease-out);
 }
 
 .archive-post-title:hover {
@@ -936,33 +1745,58 @@ h1, h2, h3, h4, h5, h6 {
   min-height: 2rem;
   padding: 0.2rem 0.7rem;
   border-radius: 999px;
+  font-size: 0.85rem;
   font-weight: 500;
   border: 1.5px solid var(--border);
   background: var(--surface-glass);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   color: var(--text-secondary);
-  transition: all var(--duration-fast) var(--ease-spring);
+  position: relative;
+  overflow: hidden;
+  transition: color var(--duration-fast) var(--ease-out),
+              border-color var(--duration-fast) var(--ease-out),
+              background var(--duration-fast) var(--ease-out),
+              box-shadow var(--duration-fast) var(--ease-out);
 }
 
-/* Size modifiers — declared BEFORE hover/active so hover/active colors win */
-.tag-cloud-item.size-xs { font-size: 0.65rem; }
-.tag-cloud-item.size-sm { font-size: 0.72rem; }
-.tag-cloud-item.size-md { font-size: 0.8rem; }
-.tag-cloud-item.size-lg { font-size: 0.95rem; }
-.tag-cloud-item.size-xl { font-size: 1.15rem; color: var(--accent); }
+.tag-cloud-item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, var(--primary-muted), transparent);
+  opacity: 0;
+  transform: translateX(-60%);
+  transition: opacity var(--duration-normal) var(--ease-out),
+              transform var(--duration-slow) var(--ease-out);
+}
+
+/* Weight modifiers keep emphasis without changing tag label size. */
+.tag-cloud-item.size-xs,
+.tag-cloud-item.size-sm,
+.tag-cloud-item.size-md,
+.tag-cloud-item.size-lg,
+.tag-cloud-item.size-xl { font-size: inherit; }
+
+.tag-cloud-item.size-xl { color: var(--accent); }
 
 .tag-cloud-item:hover {
   border-color: var(--primary);
   color: var(--primary);
   box-shadow: var(--shadow-glow-primary);
-  transform: scale(1.08);
+}
+
+.tag-cloud-item:hover::after,
+.tag-cloud-item.active::after {
+  opacity: 1;
+  transform: translateX(60%);
 }
 
 .tag-cloud-item.active {
   border-color: var(--primary);
   background: var(--primary);
-  color: #fff;
+  color: var(--text);
   box-shadow: var(--shadow-glow-primary);
 }
 
@@ -973,7 +1807,7 @@ h1, h2, h3, h4, h5, h6 {
 .tag-back-link a {
   color: var(--text-secondary);
   font-size: 0.85rem;
-  transition: color var(--duration-fast);
+  transition: color var(--duration-fast) var(--ease-out);
 }
 
 .tag-back-link a:hover {
@@ -1006,7 +1840,119 @@ h1, h2, h3, h4, h5, h6 {
 
 .search-input-wrap {
   position: relative;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
+}
+
+.search-input-wrap::after {
+  content: '';
+  position: absolute;
+  left: 1rem;
+  right: 1rem;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--primary), var(--accent), transparent);
+  opacity: 0;
+  transform: scaleX(0.35);
+  transition: opacity var(--duration-normal) var(--ease-out),
+              transform var(--duration-normal) var(--ease-out);
+  pointer-events: none;
+}
+
+.search-input-wrap:focus-within::after {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+.search-tag-panel {
+  margin-bottom: 1.5rem;
+  position: relative;
+  padding: 0.9rem;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--surface-glass), transparent);
+}
+
+.search-tag-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0.45rem;
+  pointer-events: none;
+  border: 1px solid var(--primary-muted);
+  border-radius: calc(var(--radius-md) - 4px);
+  opacity: 0.6;
+}
+
+.search-tag-panel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: radial-gradient(circle 260px at var(--spot-x) var(--spot-y), var(--primary-muted), transparent 65%);
+  opacity: 0;
+  transition: opacity var(--duration-normal) var(--ease-out);
+}
+
+.search-tag-panel:hover::after {
+  opacity: 1;
+}
+
+.search-tag-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.search-tag-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.search-clear-filters {
+  min-height: 2rem;
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-out),
+              border-color var(--duration-fast) var(--ease-out),
+              box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.search-clear-filters:hover,
+.search-clear-filters:focus-visible {
+  color: var(--primary);
+  border-color: var(--primary);
+  box-shadow: var(--shadow-glow-primary);
+}
+
+.search-clear-filters[hidden] {
+  display: none;
+}
+
+.search-tag-cloud {
+  justify-content: flex-start;
+  margin-bottom: 0;
+}
+
+.tag-filter {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.tag-filter-count {
+  margin-left: 0.35rem;
+  font-family: var(--font-mono);
+  font-size: 0.72em;
+  opacity: 0.72;
 }
 
 .search-input {
@@ -1021,7 +1967,8 @@ h1, h2, h3, h4, h5, h6 {
   border: 2px solid var(--border);
   border-radius: var(--radius-lg);
   outline: none;
-  transition: border-color var(--duration-fast), box-shadow var(--duration-fast);
+  transition: border-color var(--duration-fast) var(--ease-out),
+              box-shadow var(--duration-fast) var(--ease-out);
 }
 
 .search-input:focus {
@@ -1039,6 +1986,13 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 1rem;
 }
 
+.search-active-filter {
+  min-height: 1.5rem;
+  margin-bottom: 0.35rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
 .search-result-item {
   padding: 1.25rem;
   margin-bottom: 0.75rem;
@@ -1047,17 +2001,66 @@ h1, h2, h3, h4, h5, h6 {
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border: 1px solid var(--border-light);
-  transition: box-shadow var(--duration-fast);
+  position: relative;
+  overflow: hidden;
+  transition: border-color var(--duration-fast) var(--ease-out),
+              box-shadow var(--duration-fast) var(--ease-out),
+              background var(--duration-fast) var(--ease-out);
+}
+
+.search-result-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.85rem;
+  bottom: 0.85rem;
+  width: 2px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--primary), var(--accent));
+  opacity: 0;
+  transition: opacity var(--duration-normal) var(--ease-out),
+              box-shadow var(--duration-normal) var(--ease-out);
+}
+
+.search-result-item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle 240px at var(--spot-x) var(--spot-y), var(--primary-muted), transparent 68%);
+  opacity: 0;
+  transition: opacity var(--duration-normal) var(--ease-out);
 }
 
 .search-result-item:hover {
+  border-color: var(--primary);
   box-shadow: var(--shadow-glow-primary);
+}
+
+.search-result-item:hover::before {
+  opacity: 1;
+  box-shadow: 0 0 12px var(--primary-glow);
+}
+
+.search-result-item:hover::after {
+  opacity: 1;
 }
 
 .search-result-title {
   font-size: 1.1rem;
   font-weight: 600;
   margin-bottom: 0.3rem;
+}
+
+.search-result-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 0.5rem;
+}
+
+.search-result-tags .tag-pill {
+  pointer-events: none;
 }
 
 .search-result-excerpt {
@@ -1067,11 +2070,13 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .search-result-excerpt mark {
+  --mark-glow: 0;
   background: var(--primary-muted);
   color: var(--accent);
   font-weight: 600;
   padding: 0.05em 0.2em;
   border-radius: 2px;
+  box-shadow: 0 0 calc(var(--mark-glow) * 18px) var(--accent-glow);
 }
 
 .search-empty {
@@ -1093,6 +2098,8 @@ h1, h2, h3, h4, h5, h6 {
 .about-card {
   padding: 2.5rem;
   text-align: center;
+  position: relative;
+  overflow: hidden;
 }
 
 .about-avatar {
@@ -1125,23 +2132,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ============================================
-   13. Footer
-   ============================================ */
-
-.footer {
-  border-top: 1px solid var(--border-light);
-  padding: 2.5rem 1.5rem;
-  text-align: center;
-  margin-top: 4rem;
-}
-
-.footer-copyright {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-}
-
-/* ============================================
-   14. Back to Top
+   13. Back to Top
    ============================================ */
 
 .back-to-top {
@@ -1164,7 +2155,11 @@ h1, h2, h3, h4, h5, h6 {
   opacity: 0;
   transform: translateY(12px);
   pointer-events: none;
-  transition: all var(--duration-normal) var(--ease-out);
+  transition: opacity var(--duration-normal) var(--ease-out),
+              transform var(--duration-normal) var(--ease-out),
+              border-color var(--duration-normal) var(--ease-out),
+              color var(--duration-normal) var(--ease-out),
+              box-shadow var(--duration-normal) var(--ease-out);
   z-index: 900;
 }
 
@@ -1181,7 +2176,20 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ============================================
-   15. Pagination
+   Sakura canvas (light-theme cherry blossom effect)
+   ============================================ */
+
+#sakuraCanvas {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  width: 100%;
+  height: 100%;
+}
+
+/* ============================================
+   14. Pagination
    ============================================ */
 
 .pagination {
@@ -1189,6 +2197,31 @@ h1, h2, h3, h4, h5, h6 {
   justify-content: center;
   gap: 0.5rem;
   margin-top: 2.5rem;
+}
+
+.archive-pagination {
+  display: grid;
+  grid-template-columns: minmax(7rem, 1fr) auto minmax(7rem, 1fr);
+  align-items: center;
+}
+
+.archive-pagination__side,
+.archive-pagination__pages {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.archive-pagination__side--prev {
+  justify-content: flex-end;
+}
+
+.archive-pagination__pages {
+  justify-content: center;
+}
+
+.archive-pagination__side--next {
+  justify-content: flex-start;
 }
 
 .pagination a,
@@ -1203,7 +2236,10 @@ h1, h2, h3, h4, h5, h6 {
   border: 1px solid var(--border);
   font-size: 0.9rem;
   font-weight: 500;
-  transition: all var(--duration-fast);
+  transition: color var(--duration-fast) var(--ease-out),
+              border-color var(--duration-fast) var(--ease-out),
+              background var(--duration-fast) var(--ease-out),
+              box-shadow var(--duration-fast) var(--ease-out);
 }
 
 .pagination a {
@@ -1221,19 +2257,43 @@ h1, h2, h3, h4, h5, h6 {
 
 .pagination .current {
   background: var(--primary);
-  color: #fff;
+  color: var(--text);
   border-color: var(--primary);
   font-weight: 700;
 }
 
+.archive-pagination a,
+.archive-pagination span {
+  transform: none !important;
+}
+
+@media (max-width: 640px) {
+  .archive-pagination {
+    grid-template-columns: minmax(4.5rem, 1fr) auto minmax(4.5rem, 1fr);
+    gap: 0.35rem;
+  }
+
+  .archive-pagination__side,
+  .archive-pagination__pages {
+    gap: 0.35rem;
+  }
+
+  .archive-pagination .extend {
+    min-width: 36px;
+    padding: 0 0.55rem;
+    font-size: 0.8rem;
+  }
+}
+
 /* ============================================
-   16. Category Page
+   15. Category Page
    ============================================ */
 
 .category-container {
   max-width: var(--content-width);
   margin: calc(var(--navbar-height) + 2rem) auto 4rem;
   padding: 0 1.5rem;
+  --timeline-progress: 1;
 }
 
 .category-list {
@@ -1254,14 +2314,17 @@ h1, h2, h3, h4, h5, h6 {
   -webkit-backdrop-filter: blur(8px);
   color: var(--text-secondary);
   font-weight: 500;
-  transition: all var(--duration-fast) var(--ease-spring);
+  transition: color var(--duration-fast) var(--ease-out),
+              border-color var(--duration-fast) var(--ease-out),
+              box-shadow var(--duration-fast) var(--ease-out),
+              background var(--duration-fast) var(--ease-out);
 }
 
 .category-list-item a:hover {
   border-color: var(--primary);
   color: var(--primary);
   box-shadow: var(--shadow-glow-primary);
-  transform: scale(1.05);
+  background: var(--primary-muted);
 }
 
 .category-list-item .category-count {
@@ -1271,7 +2334,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ============================================
-   17. Section title with geometric decoration
+   16. Section title with geometric decoration
    ============================================ */
 
 .section-title {
@@ -1294,7 +2357,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ============================================
-   18. Utility
+   17. Utility
    ============================================ */
 
 .sr-only {
@@ -1314,8 +2377,71 @@ h1, h2, h3, h4, h5, h6 {
   padding: 0 1.5rem;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  /* No JS / reduced-motion: every reveal target is visible immediately, no
+     transforms, no layer promotion. The controller never needs to run. */
+  .reveal,
+  .reveal-stagger > *,
+  .reveal-subtle {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .will-animate {
+    will-change: auto !important;
+  }
+	  /* Theme toggle: keep the icon swap instant and upright — no rotation. */
+	  .theme-icon {
+	    transform: none !important;
+	  }
+	  .effects-icon {
+	    transform: none !important;
+	  }
+  .hero-enter .parallax-layer--bg,
+  .hero-enter .hero-title span,
+  .hero-enter .hero-subtitle,
+  .hero-enter .hero-posts .hero-post-card,
+  .hero-enter .hero-archive-link,
+  .hero-enter .footer-copyright,
+  .footer-copyright.hero-enter-target {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+
+  .archive-container,
+  .category-container {
+    --timeline-progress: 1;
+  }
+
+  .scroll-progress {
+    display: none;
+  }
+
+  #sakuraCanvas {
+    display: none;
+  }
+
+  .spotlight-surface::after,
+  .article-card::after,
+  .search-result-item::after,
+  .search-tag-panel::after,
+  .post-nav-item::after,
+  .about-card::after {
+    opacity: 0 !important;
+  }
+}
+
 /* ============================================
-   19. Print styles
+   18. Print styles
    ============================================ */
 
 @media print {

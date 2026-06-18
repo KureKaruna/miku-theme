@@ -20,12 +20,47 @@
         </li>
       <% } %>
       <li>
-        <button class="theme-toggle" id="themeToggle" aria-label="<%= __('theme.switch_dark') %>" title="Toggle theme">
-          <span class="theme-toggle-icon" aria-hidden="true">&#9789;</span>
+        <button class="theme-toggle" id="themeToggle" aria-label="<%= __('theme.switch_dark') %>" title="<%= __('theme.switch_dark') %>">
+          <span class="theme-toggle-icon" aria-hidden="true">
+            <svg class="theme-icon theme-icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="4.2"></circle>
+              <line x1="12" y1="2.4" x2="12" y2="5"></line>
+              <line x1="12" y1="19" x2="12" y2="21.6"></line>
+              <line x1="2.4" y1="12" x2="5" y2="12"></line>
+              <line x1="19" y1="12" x2="21.6" y2="12"></line>
+              <line x1="5.2" y1="5.2" x2="7" y2="7"></line>
+              <line x1="17" y1="17" x2="18.8" y2="18.8"></line>
+              <line x1="5.2" y1="18.8" x2="7" y2="17"></line>
+              <line x1="17" y1="7" x2="18.8" y2="5.2"></line>
+            </svg>
+            <svg class="theme-icon theme-icon--moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 13.2A8 8 0 1 1 10.8 4a6.2 6.2 0 0 0 9.2 9.2z"></path>
+            </svg>
+          </span>
         </button>
-      </li>
-      <li>
-        <button class="lang-toggle" id="langToggle" aria-label="<%= __('lang.switch_to') %>" title="<%= __('lang.label') %>" data-i18n-attrs="aria-label">
+	      </li>
+	      <li>
+	        <button class="effects-toggle" id="effectsToggle" aria-label="<%= __('effects.turn_off') %>" title="<%= __('effects.turn_off') %>">
+	          <span class="effects-toggle-icon" aria-hidden="true">
+	            <svg class="effects-icon effects-icon--on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+	              <g transform="translate(12 12)">
+	                <ellipse cx="0" cy="-6.5" rx="2.2" ry="3.5"/>
+	                <ellipse cx="0" cy="-6.5" rx="2.2" ry="3.5" transform="rotate(72)"/>
+	                <ellipse cx="0" cy="-6.5" rx="2.2" ry="3.5" transform="rotate(144)"/>
+	                <ellipse cx="0" cy="-6.5" rx="2.2" ry="3.5" transform="rotate(216)"/>
+	                <ellipse cx="0" cy="-6.5" rx="2.2" ry="3.5" transform="rotate(288)"/>
+	                <circle cx="0" cy="0" r="1.8" fill="currentColor" stroke="none"/>
+	              </g>
+	            </svg>
+	            <svg class="effects-icon effects-icon--off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+	              <circle cx="12" cy="12" r="9"/>
+	              <line x1="6" y1="6" x2="18" y2="18"/>
+	            </svg>
+	          </span>
+	        </button>
+	      </li>
+	      <li>
+	        <button class="lang-toggle" id="langToggle" aria-label="<%= __('lang.switch_to') %>" title="<%= __('lang.label') %>" data-i18n-attrs="aria-label">
           <span class="lang-toggle-text"><%= __('lang.switch_to') %></span>
         </button>
       </li>

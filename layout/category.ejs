@@ -3,10 +3,10 @@
 
 <main id="main-content">
   <div class="category-container">
-    <h1 class="page-title kinetic-title"><%= page.category || __('category.title') %></h1>
+    <h1 class="page-title kinetic-title reveal"><%= page.category || __('category.title') %></h1>
 
     <% if (site.categories && site.categories.length) { %>
-      <ul class="category-list">
+      <ul class="category-list reveal-stagger">
         <% site.categories.each(function(cat) { %>
           <li class="category-list-item">
             <a href="<%= url_for('/categories/' + cat.name) %>"><%= cat.name %>
