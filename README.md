@@ -6,10 +6,6 @@
 
 *A Hatsune Miku themed personal blog theme for Hexo 8*
 
-解构主义 × 新未来主义 · 纯 CSS/原生 JS 动效 · 零动画库依赖
-
-*Deconstructivist × Neo-Futuristic · Pure CSS/Native JS Motion · Zero Animation Library*
-
 </div>
 
 ---
@@ -20,7 +16,10 @@
 |:---:|:---:|
 | ![demo1](./demo/demo1.webp) | ![demo2](./demo/demo2.webp) |
 | ![demo3](./demo/demo3.webp) | ![demo4](./demo/demo4.webp) |
-| ![demo5](./demo/demo5.webp) | |
+| ![demo5](./demo/demo5.webp) | ![demo6](./demo/demo6.webp) |
+| ![demo7](./demo/demo7.webp) | ![demo8](./demo/demo8.webp) |
+| ![demo9](./demo/demo9.webp) | ![demo10](./demo/demo10.webp) |
+| ![demo11](./demo/demo11.webp) | ![demo12](./demo/demo12.webp) |
 
 ---
 
